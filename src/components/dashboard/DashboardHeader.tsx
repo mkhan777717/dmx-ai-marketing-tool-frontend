@@ -1,11 +1,24 @@
+import Link from "next/link";
+
 export default function DashboardHeader() {
   return (
-    <div className="flex items-center justify-between mb-8">
+    <div className="flex items-start justify-between mb-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1"> Welcome to the AI Marketing Dashboard.</p>
+        <h2 className="text-xl font-bold text-slate-900">Overview</h2>
+        <p className="text-sm text-slate-500 mt-0.5">
+          Here&apos;s a summary of your platform activity.
+        </p>
       </div>
-      <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">+ New Campaign</button>
+      <Link
+        href="/dashboard/campaigns/create"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        New Campaign
+      </Link>
     </div>
   );
 }

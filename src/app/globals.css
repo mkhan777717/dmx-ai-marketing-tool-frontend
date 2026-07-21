@@ -1,19 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* DatamindX Design Tokens */
+  --dmx-bg: #F8FAFC;
+  --dmx-surface: #FFFFFF;
+  --dmx-border: #E2E8F0;
+  --dmx-border-strong: #CBD5E1;
+
+  --dmx-text-primary: #0F172A;
+  --dmx-text-secondary: #64748B;
+  --dmx-text-tertiary: #94A3B8;
+
+  --dmx-primary: #2563EB;
+  --dmx-primary-dark: #1D4ED8;
+  --dmx-primary-light: #EFF6FF;
+
+  --dmx-secondary: #6366F1;
+  --dmx-accent: #06B6D4;
+
+  --dmx-success: #16A34A;
+  --dmx-warning: #D97706;
+  --dmx-danger: #DC2626;
+
+  --dmx-sidebar-bg: #0F172A;
+  --dmx-sidebar-hover: #1E293B;
+  --dmx-sidebar-active: #2563EB;
+
+  --dmx-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --dmx-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --dmx-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
+  --dmx-radius-sm: 0.5rem;
+  --dmx-radius-md: 0.75rem;
+  --dmx-radius-lg: 1rem;
+  --dmx-radius-xl: 1.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--dmx-bg);
+  color: var(--dmx-text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* Focus visible ring — accessibility */
+:focus-visible {
+  outline: 2px solid var(--dmx-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Selection */
+::selection {
+  background: #DBEAFE;
+  color: #1E40AF;
 }

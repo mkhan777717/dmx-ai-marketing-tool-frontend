@@ -1,12 +1,21 @@
 import CampaignFilters from "@/components/campaigns/CampaignFilters";
-import CampaignStatusBadge from "@/components/campaigns/CampaignStatusBadge";
 import CampaignTable from "@/components/campaigns/CampaignTable";
 
 export default function CampaignsPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Campaigns Management</h1>
+    <div className="space-y-5">
+      {/* Page header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">All Campaigns</h2>
+          <p className="text-sm text-slate-500 mt-0.5">Monitor and manage all your marketing campaigns in one place.</p>
+        </div>
+      </div>
+
+      {/* Filters + Create button */}
       <CampaignFilters />
+
+      {/* Table */}
       <CampaignTable />
     </div>
   );

@@ -1,81 +1,138 @@
+import Link from "next/link";
+
 export default function CampaignForm() {
   return (
-    <form className="bg-white rounded-xl shadow p-6 space-y-5 max-w-4xl">
-      <div>
-        <label className="block mb-2 font-medium">Campaign Name</label>
-        <input
-          type="text"
-          placeholder="Enter campaign name"
-          className="w-full border rounded-lg px-4 py-2"
-          required
-        />
+    <form className="bg-white rounded-xl border border-slate-200 shadow-sm max-w-3xl overflow-hidden">
+      {/* Form header */}
+      <div className="px-7 py-5 border-b border-slate-100">
+        <h2 className="text-sm font-semibold text-slate-800">Campaign Details</h2>
+        <p className="text-xs text-slate-400 mt-0.5">Fill in the information below to set up your campaign.</p>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2 font-medium">Budget</label>
+
+      {/* Form body */}
+      <div className="px-7 py-6 space-y-5">
+        {/* Campaign Name */}
+        <div className="space-y-1.5">
+          <label htmlFor="campaign-name" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+            Campaign Name <span className="text-red-500">*</span>
+          </label>
           <input
-            type="number"
-            placeholder="₹"
-            className="w-full border rounded-lg px-4 py-2"
+            id="campaign-name"
+            type="text"
+            placeholder="e.g. Summer Sale 2026"
             required
+            className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
           />
         </div>
-        <div>
-          <label className="block mb-2 font-medium">Status</label>
-          <select
-            className="w-full border rounded-lg px-4 py-2"
-            defaultValue=""
+
+        {/* Budget + Status */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label htmlFor="campaign-budget" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              Budget <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400 pointer-events-none">₹</span>
+              <input
+                id="campaign-budget"
+                type="number"
+                placeholder="0"
+                required
+                className="w-full h-10 pl-7 pr-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="campaign-status" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              Status <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="campaign-status"
+                defaultValue=""
+                className="w-full h-10 pl-3.5 pr-9 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all appearance-none cursor-pointer"
+              >
+                <option value="" disabled>Select status…</option>
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+              </select>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Start Date + End Date */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label htmlFor="campaign-start" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              Start Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="campaign-start"
+              type="date"
+              required
+              className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all cursor-pointer"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="campaign-end" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              End Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="campaign-end"
+              type="date"
+              required
+              className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="space-y-1.5">
+          <label htmlFor="campaign-description" className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
+            Description
+          </label>
+          <textarea
+            id="campaign-description"
+            rows={4}
+            placeholder="Describe the campaign goals, target audience, and key messaging…"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all resize-none"
+          />
+        </div>
+      </div>
+
+      {/* Form footer */}
+      <div className="px-7 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+        <p className="text-xs text-slate-400">
+          <span className="text-red-500">*</span> Required fields
+        </p>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/campaigns"
+            className="inline-flex items-center h-9 px-4 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
           >
-            <option value="" disabled>
-              Select Status
-            </option>
-            <option>Draft</option>
-            <option>Active</option>
-            <option>Scheduled</option>
-            <option>Completed</option>
-          </select>
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 h-9 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Save Campaign
+          </button>
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2 font-medium">Start Date</label>
-          <input
-            type="date"
-            className="w-full border rounded-lg px-4 py-2"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-2 font-medium">End Date</label>
-          <input
-            type="date"
-            className="w-full border rounded-lg px-4 py-2"
-            required
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block mb-2 font-medium">Description</label>
-        <textarea
-          rows={4}
-          placeholder="Campaign description..."
-          className="w-full border rounded-lg px-4 py-2"
-          required
-        />
-      </div>
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          className="px-6 py-2 border rounded-lg hover:bg-gray-100"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Save Campaign
-        </button>
       </div>
     </form>
   );

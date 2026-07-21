@@ -2,20 +2,31 @@ interface CampaignStatusBadgeProps {
   status: "Active" | "Draft" | "Scheduled" | "Completed";
 }
 
-export default function CampaignStatusBadge({
-  status,
-}: CampaignStatusBadgeProps) {
-  const statusStyles = {
-    Active: "bg-green-100 text-green-700",
-    Draft: "bg-yellow-100 text-yellow-700",
-    Scheduled: "bg-blue-100 text-blue-700",
-    Completed: "bg-gray-100 text-gray-700",
-  };
+const statusConfig = {
+  Active: {
+    dot: "bg-green-500",
+    wrapper: "bg-green-50 text-green-700 border border-green-200",
+  },
+  Draft: {
+    dot: "bg-amber-400",
+    wrapper: "bg-amber-50 text-amber-700 border border-amber-200",
+  },
+  Scheduled: {
+    dot: "bg-blue-500",
+    wrapper: "bg-blue-50 text-blue-700 border border-blue-200",
+  },
+  Completed: {
+    dot: "bg-slate-400",
+    wrapper: "bg-slate-50 text-slate-600 border border-slate-200",
+  },
+};
+
+export default function CampaignStatusBadge({ status }: CampaignStatusBadgeProps) {
+  const config = statusConfig[status];
 
   return (
-    <span
-      className={`rounded-full px-3 py-1 text-sm font-medium ${statusStyles[status]}`}
-    >
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${config.wrapper}`}>
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />
       {status}
     </span>
   );
