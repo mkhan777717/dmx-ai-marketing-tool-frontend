@@ -4,7 +4,6 @@ import CampaignTable from "@/components/campaigns/CampaignTable";
 export default function CampaignsPage() {
   return (
     <div className="space-y-5">
-      {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900">All Campaigns</h2>
@@ -12,10 +11,8 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {/* Filters + Create button */}
       <CampaignFilters />
 
-      {/* Table */}
       <CampaignTable />
     </div>
   );
