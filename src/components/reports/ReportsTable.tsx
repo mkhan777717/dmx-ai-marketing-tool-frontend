@@ -196,7 +196,7 @@ export default function ReportsTable() {
                   <td className="px-6 py-4 text-slate-500">{report.generatedOn}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-linear-to-br from-blue-400 to-indigo-500 flex items-center justify-center shrink-0">
                         <span className="text-[0.55rem] font-bold text-white">
                           {report.generatedBy.charAt(0).toUpperCase()}
                         </span>
