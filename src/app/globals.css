@@ -2,7 +2,6 @@
 @import "tailwindcss";
 
 :root {
-  /* DatamindX Design Tokens */
   --dmx-bg: #F8FAFC;
   --dmx-surface: #FFFFFF;
   --dmx-border: #E2E8F0;
@@ -56,15 +55,11 @@ body {
   font-size: 0.9375rem;
   line-height: 1.6;
 }
-
-/* Focus visible ring — accessibility */
 :focus-visible {
   outline: 2px solid var(--dmx-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
-
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -79,8 +74,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
-
-/* Selection */
 ::selection {
   background: #DBEAFE;
   color: #1E40AF;

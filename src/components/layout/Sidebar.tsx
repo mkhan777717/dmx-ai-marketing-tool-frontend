@@ -51,7 +51,7 @@ const navItems = [
   },
   {
     label: "AI Tools",
-    href: "/dashboard/ai",
+    href: "/dashboard/ai-tools",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
@@ -72,11 +72,9 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen flex flex-col bg-[#0F172A] text-white shrink-0">
-      {/* Logo */}
       <div className="px-6 py-5 border-b border-white/[0.07]">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          {/* Logo mark */}
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-900/40">
+          <div className="w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-900/40">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
@@ -89,8 +87,6 @@ export default function Sidebar() {
           </div>
         </Link>
       </div>
-
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-5 space-y-1">
         <p className="px-3 mb-3 text-[0.65rem] font-semibold text-slate-500 uppercase tracking-widest">
           Main Menu
@@ -110,7 +106,6 @@ export default function Sidebar() {
                 }
               `}
             >
-              {/* Active indicator bar */}
               {active && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-blue-300 rounded-r-full" />
               )}
@@ -122,10 +117,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {/* Bottom section */}
       <div className="px-3 pb-5 border-t border-white/[0.07] pt-4">
-        {/* Settings link */}
         <Link
           href="/dashboard"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.07] transition-all duration-200"
@@ -138,7 +130,7 @@ export default function Sidebar() {
         </Link>
 
         {/* Version badge */}
-        <div className="mt-4 mx-3 px-3 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+        <div className="mt-4 mx-3 px-3 py-2.5 rounded-lg bg-white/4 border border-white/6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-slate-300">DMX Platform</p>
