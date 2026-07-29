@@ -36,8 +36,6 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader />
-
-      {/* KPI Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
           title="Active Campaigns"
@@ -72,11 +70,7 @@ export default function DashboardPage() {
           positive={true}
         />
       </div>
-
-      {/* Campaign table */}
       <DashboardCampaignTable />
-
-      {/* Bottom row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <RecentCampaigns />
         <RecentActivity />

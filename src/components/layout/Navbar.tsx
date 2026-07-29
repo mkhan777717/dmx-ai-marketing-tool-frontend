@@ -8,7 +8,7 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   "/dashboard/campaigns/create": { title: "Create Campaign", description: "Set up a new marketing campaign." },
   "/dashboard/analytics": { title: "Analytics", description: "Insights and performance data." },
   "/dashboard/reports": { title: "Reports", description: "Download and review your reports." },
-  "/dashboard/ai": { title: "AI Tools", description: "AI-powered marketing utilities." },
+  "/dashboard/ai-tools": { title: "AI Tools", description: "AI-powered marketing utilities." },
 };
 
 function getPageMeta(pathname: string) {
@@ -25,17 +25,13 @@ export default function Navbar() {
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      {/* Left: Page title */}
       <div className="flex items-center gap-3">
         <div>
           <h1 className="text-[0.95rem] font-semibold text-slate-900 leading-tight">{meta.title}</h1>
           <p className="text-[0.72rem] text-slate-400 leading-tight hidden sm:block">{meta.description}</p>
         </div>
       </div>
-
-      {/* Right: Actions */}
       <div className="flex items-center gap-2">
-        {/* Search */}
         <div className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm w-52 hover:border-slate-300 transition-colors cursor-text">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
@@ -44,8 +40,6 @@ export default function Navbar() {
           <span className="text-[0.8rem] select-none">Search anything…</span>
           <span className="ml-auto text-[0.65rem] px-1.5 py-0.5 rounded border border-slate-300 text-slate-400 font-mono">⌘K</span>
         </div>
-
-        {/* Notifications */}
         <button
           aria-label="Notifications"
           className="relative w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
@@ -54,19 +48,14 @@ export default function Navbar() {
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          {/* Unread dot */}
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-white" />
         </button>
-
-        {/* Divider */}
         <div className="w-px h-6 bg-slate-200 mx-1" />
-
-        {/* Profile */}
         <button
           aria-label="User profile"
           className="flex items-center gap-2.5 h-9 px-2 rounded-lg hover:bg-slate-100 transition-colors group"
         >
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[0.7rem] font-bold shrink-0">
+          <div className="w-7 h-7 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[0.7rem] font-bold shrink-0">
             AD
           </div>
           <div className="hidden sm:block text-left">
