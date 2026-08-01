@@ -8,7 +8,16 @@ const navItems = [
     label: "Dashboard",
     href: "/dashboard",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="3" y="3" width="7" height="7" rx="1" />
         <rect x="14" y="3" width="7" height="7" rx="1" />
         <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -20,7 +29,16 @@ const navItems = [
     label: "Campaigns",
     href: "/dashboard/campaigns",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
       </svg>
     ),
@@ -29,7 +47,16 @@ const navItems = [
     label: "Analytics",
     href: "/dashboard/analytics",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
@@ -40,7 +67,16 @@ const navItems = [
     label: "Reports",
     href: "/dashboard/reports",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14,2 14,8 20,8" />
         <line x1="16" y1="13" x2="8" y2="13" />
@@ -53,13 +89,80 @@ const navItems = [
     label: "AI Tools",
     href: "/dashboard/ai-tools",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
         <path d="M12 8v4l3 3" />
         <circle cx="12" cy="12" r="1" fill="currentColor" />
       </svg>
     ),
   },
+  {
+    label: "Profile",
+    href: "/dashboard/profile",
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 21a8 8 0 0 0-16 0" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
+  },
+  {
+    label: "Workspace",
+    href: "/dashboard/workspace",
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M3 7h18" />
+        <path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2" />
+        <rect x="3" y="7" width="18" height="13" rx="2" />
+      </svg>
+    ),
+  },
+  {
+  label: "Billing",
+  href: "/dashboard/billing",
+  icon: (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  ),
+},
 ];
 
 export default function Sidebar() {
@@ -75,15 +178,28 @@ export default function Sidebar() {
       <div className="px-6 py-5 border-b border-white/[0.07]">
         <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-900/40">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
           <div className="leading-tight">
-            <p className="text-[0.9rem] font-700 tracking-tight text-white font-semibold">DatamindX</p>
-            <p className="text-[0.65rem] text-slate-400 font-medium tracking-widest uppercase">AI Platform</p>
+            <p className="text-[0.9rem] font-700 tracking-tight text-white font-semibold">
+              DatamindX
+            </p>
+            <p className="text-[0.65rem] text-slate-400 font-medium tracking-widest uppercase">
+              AI Platform
+            </p>
           </div>
         </Link>
       </div>
@@ -100,16 +216,19 @@ export default function Sidebar() {
               className={`
                 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
                 transition-all duration-200 group relative
-                ${active
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.07]"
+                ${
+                  active
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.07]"
                 }
               `}
             >
               {active && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-blue-300 rounded-r-full" />
               )}
-              <span className={`shrink-0 transition-colors duration-200 ${active ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`}>
+              <span
+                className={`shrink-0 transition-colors duration-200 ${active ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`}
+              >
                 {item.icon}
               </span>
               <span>{item.label}</span>
@@ -119,22 +238,33 @@ export default function Sidebar() {
       </nav>
       <div className="px-3 pb-5 border-t border-white/[0.07] pt-4">
         <Link
-          href="/dashboard"
+          href="/dashboard/settings"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.07] transition-all duration-200"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <circle cx="12" cy="12" r="3" />
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
           </svg>
           <span>Settings</span>
         </Link>
-
-        {/* Version badge */}
         <div className="mt-4 mx-3 px-3 py-2.5 rounded-lg bg-white/4 border border-white/6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-300">DMX Platform</p>
-              <p className="text-[0.65rem] text-slate-500 mt-0.5">v1.0.0 — Beta</p>
+              <p className="text-xs font-semibold text-slate-300">
+                DMX Platform
+              </p>
+              <p className="text-[0.65rem] text-slate-500 mt-0.5">
+                v1.0.0 — Beta
+              </p>
             </div>
             <span className="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
               BETA
