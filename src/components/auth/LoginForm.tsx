@@ -13,36 +13,35 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+const handleSubmit = async (event: FormEvent) => {
+  event.preventDefault();
 
-    setError("");
-    setLoading(true);
+  setError("");
+  setLoading(true);
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      const {
-  data: { session },
-} = await supabase.auth.getSession();
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-console.log("Supabase session:", session);
-console.log("Access token exists:", !!session?.access_token);
-
-      if (error) {
-        setError(error.message);
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+    if (error) {
+      setError(error.message);
+      return;
     }
-  };
+
+    if (!data.session) {
+      setError("Login succeeded, but no authentication session was created.");
+      return;
+    }
+
+    router.push("/dashboard");
+  } catch {
+    setError("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -50,7 +49,9 @@ console.log("Access token exists:", !!session?.access_token);
         <label
           htmlFor="email"
           className="block text-xs font-semibold text-slate-600 uppercase tracking-wide"
-        > Email Address</label>
+        >
+          Email Address
+        </label>
 
         <input
           id="email"
@@ -67,7 +68,9 @@ console.log("Access token exists:", !!session?.access_token);
         <label
           htmlFor="password"
           className="block text-xs font-semibold text-slate-600 uppercase tracking-wide"
-        > Password</label>
+        >
+          Password
+        </label>
 
         <input
           id="password"
@@ -98,7 +101,9 @@ console.log("Access token exists:", !!session?.access_token);
       </div>
 
       {error && (
-        <p className="text-sm text-red-600" role="alert">{error}</p>
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
       )}
 
       <button
