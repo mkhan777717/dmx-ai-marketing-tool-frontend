@@ -1,4 +1,5 @@
 import axios from "axios";
+import { supabase } from "@/lib/supabase";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -6,11 +7,11 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (!error && session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
     }
   }
   return config;
@@ -29,9 +30,7 @@ api.interceptors.response.use(
     // Handle common auth case: 401 Unauthorized
     if (error.response.status === 401) {
       if (typeof window !== "undefined") {
-        // Clear stored token so subsequent requests don't keep failing.
-        localStorage.removeItem("accessToken");
-        // NOTE: avoid forcing navigation here; let callers decide how to handle redirects.
+        // Allow callers to decide how to respond; the shared Supabase session handles the auth source.
       }
     }
 
