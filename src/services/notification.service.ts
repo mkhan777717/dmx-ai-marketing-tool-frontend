@@ -24,4 +24,8 @@ export const NotificationService = {
   getPreferences() {
     return api.get<NotificationPreferenceResponse[]>(ENDPOINTS.NOTIFICATION_PREFERENCES);
   },
+
+  updatePreference(preferenceId: string, data: Partial<Pick<NotificationPreferenceResponse, "in_app_enabled" | "email_enabled" | "push_enabled">>) {
+    return api.patch<NotificationPreferenceResponse>(ENDPOINTS.NOTIFICATION_PREFERENCE(preferenceId), data);
+  },
 };
