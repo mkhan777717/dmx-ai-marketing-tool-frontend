@@ -134,7 +134,7 @@ export default function Navbar() {
                 <button
                   onClick={handleMarkAllRead}
                   className="text-xs font-medium text-blue-600 hover:text-blue-700"
-                  disabled={loading || notifications.length === 0}
+                  disabled={loading || unreadCount === 0}
                 >
                   Mark all read
                 </button>
@@ -159,12 +159,14 @@ export default function Navbar() {
                         ) : null}
                       </div>
                       <div className="mt-3 flex items-center gap-2">
-                        <button
-                          onClick={() => void handleMarkRead(item.id)}
-                          className="text-xs font-medium text-slate-600 hover:text-slate-800"
-                        >
-                          Mark read
-                        </button>
+                        {!item.read_at ? (
+                          <button
+                            onClick={() => void handleMarkRead(item.id)}
+                            className="text-xs font-medium text-slate-600 hover:text-slate-800"
+                          >
+                            Mark read
+                          </button>
+                        ) : null}
                         <button
                           onClick={() => void handleDelete(item.id)}
                           className="text-xs font-medium text-red-600 hover:text-red-700"

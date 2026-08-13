@@ -28,7 +28,7 @@ api.interceptors.response.use(
     }
 
     // Handle common auth case: 401 Unauthorized
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         // Allow callers to decide how to respond; the shared Supabase session handles the auth source.
       }
