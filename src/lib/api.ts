@@ -9,11 +9,27 @@ export const api = axios.create({
 });
 api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    const hasSession = Boolean(session);
+    const hasAccessToken = Boolean(session?.access_token);
+
     if (!error && session?.access_token) {
       config.headers.Authorization = `Bearer ${session.access_token}`;
     }
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+        hasSession,
+        hasAccessToken,
+        hasAuthHeader: Boolean(config.headers.Authorization),
+      });
+    }
   }
+
   return config;
 });
 
@@ -21,16 +37,21 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Network errors (no response) are common in browser fetch when CORS or DNS fails
-    if (!error.response) {
-      const msg = `Network Error: unable to reach API at ${process.env.NEXT_PUBLIC_API_URL}`;
-      return Promise.reject(new Error(msg));
-    }
+    if (axios.isAxiosError(error)) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          `[API Error] ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
+          {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            message: error.message,
+          }
+        );
+      }
 
-    // Handle common auth case: 401 Unauthorized
-    if (error.response?.status === 401) {
-      if (typeof window !== "undefined") {
-        // Allow callers to decide how to respond; the shared Supabase session handles the auth source.
+      if (!error.response) {
+        error.message = `Network Error: unable to reach API at ${process.env.NEXT_PUBLIC_API_URL}`;
       }
     }
 

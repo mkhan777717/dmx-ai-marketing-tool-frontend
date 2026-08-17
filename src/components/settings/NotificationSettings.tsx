@@ -5,9 +5,10 @@ import { NotificationService } from "@/services/notification.service";
 import type { NotificationPreferenceResponse } from "@/types/notification";
 
 const preferenceLabels: Record<string, { label: string; description: string }> = {
-  email: { label: "Email Notifications", description: "Receive updates and alerts via email" },
-  campaigns: { label: "Campaign Alerts", description: "Get notified about campaign performance" },
-  ai: { label: "AI Suggestions", description: "Receive AI-powered recommendations" },
+  system: { label: "System Notifications", description: "Platform updates and important account notices." },
+  alert: { label: "Alerts", description: "Critical messages that need your attention." },
+  message: { label: "Messages", description: "Standard in-app and delivery notifications." },
+  billing: { label: "Billing", description: "Subscription and billing-related notifications." },
 };
 
 const preferenceFields: Array<{
@@ -18,6 +19,10 @@ const preferenceFields: Array<{
   { key: "email_enabled", label: "Email" },
   { key: "push_enabled", label: "Push" },
 ];
+
+const PREFERENCE_UPDATES_UNSUPPORTED = true;
+const PREFERENCE_UPDATE_UNSUPPORTED_MESSAGE =
+  "Notification preference updates are unavailable because the current backend contract does not include a writable preference endpoint.";
 
 export default function NotificationSettings() {
   const [preferences, setPreferences] = useState<NotificationPreferenceResponse[]>([]);
@@ -60,8 +65,7 @@ export default function NotificationSettings() {
     setError(null);
 
     try {
-      const { data } = await NotificationService.updatePreference(preferenceId, { [field]: value });
-      setPreferences((current) => current.map((item) => (item.id === preferenceId ? data : item)));
+      await NotificationService.updatePreference(preferenceId, { [field]: value });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to update notification preference.";
       if (message.includes("401") || message.includes("403")) {
@@ -71,7 +75,7 @@ export default function NotificationSettings() {
       } else if (message.includes("500")) {
         setError("The server could not save notification preference changes. Please try again later.");
       } else {
-        setError("Unable to save notification preference changes right now.");
+        setError(PREFERENCE_UPDATE_UNSUPPORTED_MESSAGE);
       }
     } finally {
       setSaving((current) => ({ ...current, [preferenceId]: false }));
@@ -94,7 +98,7 @@ export default function NotificationSettings() {
       ) : (
         <ul className="divide-y divide-slate-100">
           {preferences.map((item) => {
-            const config = preferenceLabels[item.notification_type] ?? {
+            const config = preferenceLabels[item.notification_type.toLowerCase()] ?? {
               label: item.notification_type,
               description: "Notification preference from your account",
             };
@@ -123,12 +127,13 @@ export default function NotificationSettings() {
                             type="checkbox"
                             checked={item[field.key]}
                             onChange={(event) => void handleToggle(item.id, field.key, event.target.checked)}
-                            disabled={isSaving}
-                            className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            disabled={isSaving || PREFERENCE_UPDATES_UNSUPPORTED}
+                            className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                           />
                         </label>
                       ))}
                     </div>
+                    <p className="mt-2 text-xs text-amber-600">{PREFERENCE_UPDATE_UNSUPPORTED_MESSAGE}</p>
                     {isSaving ? <p className="mt-2 text-xs text-slate-400">Saving changes…</p> : null}
                   </div>
                 </div>

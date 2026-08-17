@@ -1,5 +1,8 @@
-export type NotificationType = string;
-export type NotificationPriority = string;
+export const NOTIFICATION_TYPES = ["SYSTEM", "ALERT", "MESSAGE", "BILLING"] as const;
+export const NOTIFICATION_PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+export type NotificationPriority = (typeof NOTIFICATION_PRIORITIES)[number];
 
 export interface NotificationResponse {
   id: string;
@@ -20,4 +23,10 @@ export interface NotificationPreferenceResponse {
   in_app_enabled: boolean;
   email_enabled: boolean;
   push_enabled: boolean;
+}
+
+export interface NotificationPreferenceUpdate {
+  in_app_enabled?: boolean;
+  email_enabled?: boolean;
+  push_enabled?: boolean;
 }

@@ -8,7 +8,6 @@ export const ENDPOINTS = {
   NOTIFICATIONS_READ_ALL: "/notifications/read-all",
   NOTIFICATION_DELETE: (notificationId: string) => `/notifications/${notificationId}`,
   NOTIFICATION_PREFERENCES: "/notifications/preferences",
-  NOTIFICATION_PREFERENCE: (preferenceId: string) => `/notifications/preferences/${preferenceId}`,
 
   MEMBERS: (workspaceId: string) =>
     `/workspaces/${workspaceId}/members`,

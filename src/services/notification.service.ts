@@ -1,6 +1,10 @@
 import { api } from "@/lib/api";
 import { ENDPOINTS } from "@/constants/endpoints";
-import type { NotificationPreferenceResponse, NotificationResponse } from "@/types/notification";
+import type {
+  NotificationPreferenceResponse,
+  NotificationPreferenceUpdate,
+  NotificationResponse,
+} from "@/types/notification";
 
 export const NotificationService = {
   getUnread(limit = 50) {
@@ -25,7 +29,11 @@ export const NotificationService = {
     return api.get<NotificationPreferenceResponse[]>(ENDPOINTS.NOTIFICATION_PREFERENCES);
   },
 
-  updatePreference(preferenceId: string, data: Partial<Pick<NotificationPreferenceResponse, "in_app_enabled" | "email_enabled" | "push_enabled">>) {
-    return api.patch<NotificationPreferenceResponse>(ENDPOINTS.NOTIFICATION_PREFERENCE(preferenceId), data);
+  updatePreference(preferenceId: string, data: NotificationPreferenceUpdate) {
+    void preferenceId;
+    void data;
+    return Promise.reject(
+      new Error("Notification preference updates are not supported by the current backend contract.")
+    );
   },
 };

@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import axios from "axios";
+import { supabase } from "@/lib/supabase";
+import type { Session } from "@supabase/supabase-js";
 import { NotificationService } from "@/services/notification.service";
 import type { NotificationResponse } from "@/types/notification";
 
@@ -36,31 +39,72 @@ export default function Navbar() {
 
   const unreadCount = useMemo(() => notifications.filter((item) => !item.read_at).length, [notifications]);
 
-  const loadNotifications = async () => {
+  const loadedTokenRef = useRef<string | null>(null);
+
+  const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const { data } = await NotificationService.getUnread(50);
       setNotifications(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Unable to load notifications.";
-      if (message.includes("401") || message.includes("403")) {
-        setError("You are not authorized to view notifications right now.");
-      } else if (message.includes("404")) {
-        setError("Notifications are unavailable at the moment.");
-      } else if (message.includes("500")) {
-        setError("The server could not load notifications. Please try again later.");
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 401 || status === 403) {
+          setError("You are not authorized to view notifications right now.");
+        } else if (status === 404) {
+          setError("Notifications are unavailable at the moment.");
+        } else if (status === 500) {
+          setError("The server could not load notifications. Please try again later.");
+        } else if (!err.response) {
+          setError("Unable to connect to the notification service. Please check your connection.");
+        } else {
+          setError("Unable to load notifications right now.");
+        }
+      } else if (err instanceof Error) {
+        const message = err.message;
+        if (message.includes("401") || message.includes("403")) {
+          setError("You are not authorized to view notifications right now.");
+        } else if (message.includes("404")) {
+          setError("Notifications are unavailable at the moment.");
+        } else if (message.includes("500")) {
+          setError("The server could not load notifications. Please try again later.");
+        } else {
+          setError("Unable to load notifications right now.");
+        }
       } else {
         setError("Unable to load notifications right now.");
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    void loadNotifications();
-  }, []);
+    let isSubscribed = true;
+
+    const handleSession = (session: Session | null) => {
+      if (!session || !isSubscribed) return;
+      if (loadedTokenRef.current === session.access_token) return;
+      loadedTokenRef.current = session.access_token;
+      void loadNotifications();
+    };
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      handleSession(session);
+    });
+
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      handleSession(session);
+    });
+
+    return () => {
+      isSubscribed = false;
+      subscription.unsubscribe();
+    };
+  }, [loadNotifications]);
 
   const handleMarkRead = async (notificationId: string) => {
     try {
