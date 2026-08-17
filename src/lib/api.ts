@@ -1,4 +1,5 @@
 import axios from "axios";
+import { supabase } from "@/lib/supabase";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -6,13 +7,29 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    const hasSession = Boolean(session);
+    const hasAccessToken = Boolean(session?.access_token);
+
+    if (!error && session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+        hasSession,
+        hasAccessToken,
+        hasAuthHeader: Boolean(config.headers.Authorization),
+      });
     }
   }
+
   return config;
 });
 
@@ -20,18 +37,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Network errors (no response) are common in browser fetch when CORS or DNS fails
-    if (!error.response) {
-      const msg = `Network Error: unable to reach API at ${process.env.NEXT_PUBLIC_API_URL}`;
-      return Promise.reject(new Error(msg));
-    }
+    if (axios.isAxiosError(error)) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          `[API Error] ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
+          {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            message: error.message,
+          }
+        );
+      }
 
-    // Handle common auth case: 401 Unauthorized
-    if (error.response.status === 401) {
-      if (typeof window !== "undefined") {
-        // Clear stored token so subsequent requests don't keep failing.
-        localStorage.removeItem("accessToken");
-        // NOTE: avoid forcing navigation here; let callers decide how to handle redirects.
+      if (!error.response) {
+        error.message = `Network Error: unable to reach API at ${process.env.NEXT_PUBLIC_API_URL}`;
       }
     }
 
