@@ -1,5 +1,6 @@
 export const ENDPOINTS = {
   HEALTH: "/health",
+  USER_PROFILE: "/users/me",
 
   WORKSPACES: "/workspaces",
 
