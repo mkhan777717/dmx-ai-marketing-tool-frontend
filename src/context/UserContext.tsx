@@ -30,22 +30,39 @@ const UserContext = createContext<UserContextType>({
 });
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const loadedTokenRef = useRef<string | null>(null);
 
-  const fetchProfile = useCallback(async (session: Session | null) => {
-    if (!session) {
-      setUser(null);
-      setLoading(false);
-      setError(null);
-      loadedTokenRef.current = null;
-      return;
-    }
+  // 1. Supabase auth listener: ONLY updates React session state
+  useEffect(() => {
+    let isMounted = true;
 
-    // Build fallback user object from Supabase auth session details
-    const authUser = session.user;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      if (isMounted) {
+        setSession(currentSession);
+      }
+    });
+
+    void supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      if (isMounted) {
+        setSession(initialSession);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Helper to fetch backend profile for a given session
+  const fetchBackendProfile = useCallback(async (activeSession: Session) => {
+    const authUser = activeSession.user;
     const fallbackUser: UserProfile = {
       id: authUser.id,
       email: authUser.email || "",
@@ -59,10 +76,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
       const response = await UserService.getProfile();
-      if (response.data) {
+      const profileData = response.data?.data;
+
+      if (profileData) {
         setUser({
           ...fallbackUser,
-          ...response.data,
+          ...profileData,
         });
       } else {
         setUser(fallbackUser);
@@ -87,48 +106,56 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setError("An unexpected error occurred while loading profile.");
       }
 
-      // Fallback to Supabase session user data so the frontend continues to show real logged-in details
+      // Fallback to Supabase session user data so UI degrades gracefully
       setUser(fallbackUser);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const refetchProfile = useCallback(async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    await fetchProfile(session);
-  }, [fetchProfile]);
-
+  // 2. React effect driven by session state change: safely triggers profile API fetch outside callback
   useEffect(() => {
-    let isSubscribed = true;
+    let isMounted = true;
 
-    const handleSession = (session: Session | null) => {
-      if (!isSubscribed) return;
-      const currentToken = session?.access_token || null;
-      if (loadedTokenRef.current === currentToken && currentToken !== null) {
-        return;
-      }
-      loadedTokenRef.current = currentToken;
-      void fetchProfile(session);
-    };
+    if (!session) {
+      loadedTokenRef.current = null;
+      Promise.resolve().then(() => {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+          setError(null);
+        }
+      });
+      return () => {
+        isMounted = false;
+      };
+    }
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleSession(session);
-    });
+    const currentToken = session.access_token;
+    if (loadedTokenRef.current === currentToken) {
+      return () => {
+        isMounted = false;
+      };
+    }
+    loadedTokenRef.current = currentToken;
 
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSession(session);
-    });
+    void fetchBackendProfile(session);
 
     return () => {
-      isSubscribed = false;
-      subscription.unsubscribe();
+      isMounted = false;
     };
-  }, [fetchProfile]);
+  }, [session, fetchBackendProfile]);
+
+  // Manual refetch trigger
+  const refetchProfile = useCallback(async () => {
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession();
+    if (currentSession) {
+      loadedTokenRef.current = null;
+      await fetchBackendProfile(currentSession);
+    }
+  }, [fetchBackendProfile]);
 
   return (
     <UserContext.Provider value={{ user, loading, error, refetchProfile }}>

@@ -9,17 +9,18 @@ export default function ProfileCard() {
   const userDisplayName = user?.full_name || user?.name || (user?.email ? user.email.split("@")[0] : "User");
   const userEmail = user?.email || "";
   const userRole = user?.role || "Member";
-  const userDepartment = user?.department || "Marketing";
+  const userDepartment = user?.department || "Not specified";
 
   const memberSince = useMemo(() => {
-    if (!user?.created_at) return "Jan 2026";
+    if (!user?.created_at) return "—";
     try {
       const date = new Date(user.created_at);
+      if (isNaN(date.getTime())) return "—";
       return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
     } catch {
-      return "Jan 2026";
+      return "—";
     }
-  }, [user?.created_at]);
+  }, [user]);
 
   const userInitials = useMemo(() => {
     if (user?.full_name || user?.name) {
