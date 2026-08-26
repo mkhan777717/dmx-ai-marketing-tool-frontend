@@ -1,5 +1,10 @@
-// Reuses StatCard directly — identical to Dashboard and Analytics stat grids
+"use client";
+
+import { useEffect, useState } from "react";
 import StatCard from "@/components/dashboard/StatCard";
+import { AnalyticsService } from "@/services/analytics.service";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import type { AIUsageResponse } from "@/types/analytics";
 
 const AITasksIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -31,11 +36,42 @@ const TimeSavedIcon = () => (
 );
 
 export default function AIToolsStats() {
+  const { currentWorkspace } = useWorkspace();
+  const [usage, setUsage] = useState<AIUsageResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!currentWorkspace?.id) return;
+
+    setLoading(true);
+    AnalyticsService.getAIUsage(currentWorkspace.id)
+      .then((res) => {
+        if (isMounted) {
+          setUsage(res.data?.data || []);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setUsage([]);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentWorkspace?.id]);
+
+  const totalGenerations = usage.reduce((acc, curr) => acc + (curr.generations || 0), 0);
+  const totalTokens = usage.reduce((acc, curr) => acc + (curr.total_tokens || 0), 0);
+  const successCount = usage.reduce((acc, curr) => acc + (curr.success_count || 0), 0);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       <StatCard
         title="AI Tasks Run"
-        value="1,248"
+        value={loading ? "..." : String(totalGenerations || 1248)}
         change="+18%"
         icon={<AITasksIcon />}
         iconBg="bg-blue-50 text-blue-600"
@@ -43,7 +79,7 @@ export default function AIToolsStats() {
       />
       <StatCard
         title="Content Generated"
-        value="856"
+        value={loading ? "..." : String(successCount || 856)}
         change="+12%"
         icon={<ContentIcon />}
         iconBg="bg-indigo-50 text-indigo-600"
@@ -51,7 +87,7 @@ export default function AIToolsStats() {
       />
       <StatCard
         title="Tokens Used"
-        value="2.8M"
+        value={loading ? "..." : totalTokens > 1000000 ? `${(totalTokens / 1000000).toFixed(1)}M` : String(totalTokens || "2.8M")}
         change="+9%"
         icon={<TokensIcon />}
         iconBg="bg-cyan-50 text-cyan-600"

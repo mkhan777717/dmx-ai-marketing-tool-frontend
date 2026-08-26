@@ -7,6 +7,7 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
     const {
@@ -33,21 +34,31 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Global response interceptor to normalize network/auth errors
+// Global response interceptor to normalize network/auth errors & handle 401
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+
       if (process.env.NODE_ENV !== "production") {
         console.warn(
           `[API Error] ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
           {
-            status: error.response?.status,
+            status,
             statusText: error.response?.statusText,
             data: error.response?.data,
             message: error.message,
           }
         );
+      }
+
+      if (status === 401 && typeof window !== "undefined") {
+        const currentPath = window.location.pathname;
+        if (!currentPath.startsWith("/login") && !currentPath.startsWith("/signup")) {
+          await supabase.auth.signOut().catch(() => {});
+          window.location.href = "/login";
+        }
       }
 
       if (!error.response) {

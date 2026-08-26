@@ -8,6 +8,7 @@ import type { Session } from "@supabase/supabase-js";
 import { NotificationService } from "@/services/notification.service";
 import type { NotificationResponse } from "@/types/notification";
 import { useUser } from "@/context/UserContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 const pageTitles: Record<string, { title: string; description: string }> = {
   "/dashboard":                    { title: "Dashboard",       description: "Welcome back — here's what's happening." },
@@ -34,6 +35,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const meta = getPageMeta(pathname);
   const { user, loading: userLoading } = useUser();
+  const { workspaces, currentWorkspace, setCurrentWorkspaceId } = useWorkspace();
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -156,12 +158,31 @@ export default function Navbar() {
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <div>
           <h1 className="text-[0.95rem] font-semibold text-slate-900 leading-tight">{meta.title}</h1>
           <p className="text-[0.72rem] text-slate-400 leading-tight hidden sm:block">{meta.description}</p>
         </div>
+
+        {/* Workspace Switcher Pill */}
+        {workspaces.length > 0 && (
+          <div className="hidden lg:flex items-center gap-1.5 pl-3 border-l border-slate-200">
+            <span className="text-[0.7rem] font-semibold text-slate-400 uppercase">Workspace:</span>
+            <select
+              value={currentWorkspace?.id || ""}
+              onChange={(e) => setCurrentWorkspaceId(e.target.value)}
+              className="h-7 px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {workspaces.map((ws) => (
+                <option key={ws.id} value={ws.id}>
+                  {ws.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
+
       <div className="flex items-center gap-2">
         <div className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm w-52 hover:border-slate-300 transition-colors cursor-text">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

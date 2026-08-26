@@ -13,35 +13,40 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-const handleSubmit = async (event: FormEvent) => {
-  event.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
 
-  setError("");
-  setLoading(true);
+    setError("");
+    setLoading(true);
 
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const cleanEmail = email.trim();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
 
-    if (error) {
-      setError(error.message);
-      return;
+      if (error) {
+        if (error.message.toLowerCase().includes("email not confirmed")) {
+          setError("Email not confirmed. Please check your inbox or sign up for a new account.");
+        } else {
+          setError(error.message);
+        }
+        return;
+      }
+
+      if (!data.session) {
+        setError("Login succeeded, but no authentication session was created.");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    if (!data.session) {
-      setError("Login succeeded, but no authentication session was created.");
-      return;
-    }
-
-    router.push("/dashboard");
-  } catch {
-    setError("Something went wrong. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
