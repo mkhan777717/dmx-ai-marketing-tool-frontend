@@ -57,8 +57,8 @@ export default function CurrentPlan() {
             </div>
             <div className="pt-2 border-t border-slate-100">
               <p className="text-xs text-slate-400 mb-3">
-                {activePlan?.price_monthly
-                  ? `₹${activePlan.price_monthly}/month · Renews on 01 Sep 2026`
+                {(activePlan?.monthly_price ?? activePlan?.price_monthly)
+                  ? `₹${activePlan?.monthly_price ?? activePlan?.price_monthly}/month · Renews on 01 Sep 2026`
                   : "Renews on 01 Sep 2026"}
               </p>
               <div className="flex items-center gap-2">

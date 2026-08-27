@@ -26,16 +26,24 @@ export const CampaignService = {
   },
 
   create(workspaceId: string, data: CampaignCreate) {
+    const payload = {
+      ...data,
+      campaign_name: data.campaign_name || data.name || "Untitled Campaign",
+    };
     return api.post<ApiResponse<Campaign>>(
       ENDPOINTS.CAMPAIGNS(workspaceId),
-      data
+      payload
     );
   },
 
   update(workspaceId: string, campaignId: string, data: CampaignUpdate) {
+    const payload = {
+      ...data,
+      campaign_name: data.campaign_name || data.name || undefined,
+    };
     return api.put<ApiResponse<Campaign>>(
       ENDPOINTS.CAMPAIGN_BY_ID(workspaceId, campaignId),
-      data
+      payload
     );
   },
 

@@ -41,8 +41,8 @@ export default function AIGeneratorModal({
       });
 
       const data = response.data?.data;
-      if (data?.generated_text) {
-        setGeneratedResult(data.generated_text);
+      if (data?.body || data?.generated_text) {
+        setGeneratedResult(data.body || data.generated_text || "");
       } else {
         setGeneratedResult("AI Content generated successfully.");
       }

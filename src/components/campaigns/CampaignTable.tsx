@@ -136,7 +136,9 @@ export default function CampaignTable({
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-800">{campaign.name}</p>
+                        <p className="font-semibold text-slate-800">
+                          {campaign.campaign_name || campaign.name || "Untitled Campaign"}
+                        </p>
                         <p className="text-xs text-slate-400">
                           {campaign.description || `ID: ${campaign.id.slice(0, 8)}...`}
                         </p>
@@ -148,9 +150,9 @@ export default function CampaignTable({
                       <CampaignStatusBadge status={campaign.status} />
                       <select
                         className="text-xs border border-slate-200 rounded px-1.5 py-0.5 bg-white text-slate-600 focus:outline-none cursor-pointer"
-                        value={campaign.status}
+                        value={String(campaign.status).toLowerCase()}
                         onChange={(e) =>
-                          handleStatusChange(campaign.id, e.target.value as CampaignStatus)
+                          handleStatusChange(campaign.id, e.target.value.toUpperCase() as CampaignStatus)
                         }
                       >
                         <option value="draft">Draft</option>
@@ -176,7 +178,7 @@ export default function CampaignTable({
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleDelete(campaign.id, campaign.name)}
+                        onClick={() => handleDelete(campaign.id, campaign.campaign_name || campaign.name || "Campaign")}
                         className="inline-flex items-center text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg transition-colors"
                       >
                         Delete

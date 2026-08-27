@@ -92,7 +92,7 @@ export default function DashboardCampaignTable() {
                           <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                         </svg>
                       </div>
-                      <span className="font-medium text-slate-800">{campaign.name}</span>
+                      <span className="font-medium text-slate-800">{campaign.campaign_name || campaign.name || "Untitled Campaign"}</span>
                     </div>
                   </td>
                   <td className="px-6 py-3.5">
