@@ -43,7 +43,6 @@ export default function AnalyticsStats() {
     let isMounted = true;
     if (!currentWorkspace?.id) return;
 
-    setLoading(true);
     AnalyticsService.getOverview(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {

@@ -44,7 +44,6 @@ export default function AIToolsStats() {
     let isMounted = true;
     if (!currentWorkspace?.id) return;
 
-    setLoading(true);
     AnalyticsService.getAIUsage(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {

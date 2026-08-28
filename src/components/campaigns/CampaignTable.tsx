@@ -22,8 +22,7 @@ export default function CampaignTable({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCampaigns = () => {
-    if (!currentWorkspace?.id) return;
+  const fetchCampaigns = (workspaceId: string) => {
     setLoading(true);
     setError(null);
 
@@ -31,7 +30,7 @@ export default function CampaignTable({
     if (statusFilter !== "all") params.status = statusFilter;
     if (searchQuery.trim()) params.search = searchQuery.trim();
 
-    CampaignService.getAll(currentWorkspace.id, params)
+    CampaignService.getAll(workspaceId, params)
       .then((res) => {
         const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
         setCampaigns(list);
@@ -46,7 +45,35 @@ export default function CampaignTable({
   };
 
   useEffect(() => {
-    fetchCampaigns();
+    let isMounted = true;
+    if (!currentWorkspace?.id) return;
+
+    const params: { status?: string; search?: string } = {};
+    if (statusFilter !== "all") params.status = statusFilter;
+    if (searchQuery.trim()) params.search = searchQuery.trim();
+
+    CampaignService.getAll(currentWorkspace.id, params)
+      .then((res) => {
+        if (isMounted) {
+          const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+          setCampaigns(list);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError("Failed to load campaigns.");
+          setCampaigns([]);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentWorkspace?.id, searchQuery, statusFilter, onRefreshTrigger]);
 
   const handleDelete = async (campaignId: string, campaignName: string) => {
@@ -55,7 +82,7 @@ export default function CampaignTable({
 
     try {
       await CampaignService.delete(currentWorkspace.id, campaignId);
-      fetchCampaigns();
+      fetchCampaigns(currentWorkspace.id);
     } catch {
       alert("Failed to delete campaign");
     }
@@ -66,7 +93,7 @@ export default function CampaignTable({
 
     try {
       await CampaignService.changeStatus(currentWorkspace.id, campaignId, { status: newStatus });
-      fetchCampaigns();
+      fetchCampaigns(currentWorkspace.id);
     } catch {
       alert("Failed to update status");
     }

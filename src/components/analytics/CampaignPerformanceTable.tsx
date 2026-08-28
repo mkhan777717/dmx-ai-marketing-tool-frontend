@@ -14,7 +14,6 @@ export default function CampaignPerformanceTable() {
     let isMounted = true;
     if (!currentWorkspace?.id) return;
 
-    setLoading(true);
     AnalyticsService.getCampaignAnalytics(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {

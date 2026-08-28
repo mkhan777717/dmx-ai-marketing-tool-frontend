@@ -1,8 +1,12 @@
 import axios from "axios";
 import { supabase } from "@/lib/supabase";
 
+const DEFAULT_API_URL = "https://dmx-ai-marketing-backend.onrender.com/api/v1";
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
+const baseURL = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -67,7 +71,7 @@ api.interceptors.response.use(
       }
 
       if (!error.response) {
-        error.message = `Network Error: unable to reach API at ${process.env.NEXT_PUBLIC_API_URL}`;
+        error.message = `Network Error: unable to reach API at ${baseURL}`;
       }
     }
 

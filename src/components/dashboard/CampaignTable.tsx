@@ -16,7 +16,6 @@ export default function DashboardCampaignTable() {
     let isMounted = true;
     if (!currentWorkspace?.id) return;
 
-    setLoading(true);
     CampaignService.getAll(currentWorkspace.id, { limit: 5 })
       .then((res) => {
         if (isMounted) {

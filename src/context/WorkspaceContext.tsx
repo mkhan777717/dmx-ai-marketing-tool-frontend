@@ -37,7 +37,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchWorkspaces = useCallback(async () => {
+  const refetchWorkspaces = useCallback(async () => {
     if (!user) {
       setWorkspaces([]);
       setCurrentWorkspaceId(null);
@@ -53,9 +53,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       setWorkspaces(list);
 
       if (list.length > 0) {
-        if (!currentWorkspaceId || !list.some((w) => w.id === currentWorkspaceId)) {
-          setCurrentWorkspaceId(list[0].id);
-        }
+        setCurrentWorkspaceId((prev) => (!prev || !list.some((w) => w.id === prev) ? list[0].id : prev));
       } else {
         setCurrentWorkspaceId(null);
       }
@@ -66,11 +64,50 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user, currentWorkspaceId]);
+  }, [user]);
 
   useEffect(() => {
-    void fetchWorkspaces();
-  }, [fetchWorkspaces]);
+    let isMounted = true;
+    if (!user) {
+      Promise.resolve().then(() => {
+        if (isMounted) {
+          setWorkspaces([]);
+          setCurrentWorkspaceId(null);
+          setLoading(false);
+        }
+      });
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    WorkspaceService.getAll()
+      .then((res) => {
+        if (!isMounted) return;
+        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setWorkspaces(list);
+        if (list.length > 0) {
+          setCurrentWorkspaceId((prev) => (!prev || !list.some((w) => w.id === prev) ? list[0].id : prev));
+        } else {
+          setCurrentWorkspaceId(null);
+        }
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setError("Failed to fetch workspaces");
+        setWorkspaces([]);
+        setCurrentWorkspaceId(null);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   const currentWorkspace =
     workspaces.find((w) => w.id === currentWorkspaceId) || workspaces[0] || null;
@@ -83,7 +120,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         loading,
         error,
         setCurrentWorkspaceId,
-        refetchWorkspaces: fetchWorkspaces,
+        refetchWorkspaces,
       }}
     >
       {children}

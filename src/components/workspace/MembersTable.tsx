@@ -18,12 +18,10 @@ export default function MembersTable() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMembers = () => {
-    if (!currentWorkspace?.id) return;
-
+  const fetchMembers = (workspaceId: string) => {
     setLoading(true);
     setError(null);
-    MemberService.getMembers(currentWorkspace.id)
+    MemberService.getMembers(workspaceId)
       .then((res) => {
         const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
         setMembers(list);
@@ -38,7 +36,31 @@ export default function MembersTable() {
   };
 
   useEffect(() => {
-    fetchMembers();
+    let isMounted = true;
+    if (!currentWorkspace?.id) return;
+
+    MemberService.getMembers(currentWorkspace.id)
+      .then((res) => {
+        if (isMounted) {
+          const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+          setMembers(list);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError("Failed to fetch workspace members");
+          setMembers([]);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentWorkspace?.id]);
 
   const handleRemove = async (memberId: string, email?: string) => {
@@ -47,7 +69,7 @@ export default function MembersTable() {
 
     try {
       await MemberService.removeMember(currentWorkspace.id, memberId);
-      fetchMembers();
+      fetchMembers(currentWorkspace.id);
     } catch {
       alert("Failed to remove member");
     }
@@ -58,7 +80,7 @@ export default function MembersTable() {
 
     try {
       await MemberService.suspendMember(currentWorkspace.id, memberId);
-      fetchMembers();
+      fetchMembers(currentWorkspace.id);
     } catch {
       alert("Failed to suspend member");
     }
@@ -69,7 +91,7 @@ export default function MembersTable() {
 
     try {
       await MemberService.reactivateMember(currentWorkspace.id, memberId);
-      fetchMembers();
+      fetchMembers(currentWorkspace.id);
     } catch {
       alert("Failed to reactivate member");
     }

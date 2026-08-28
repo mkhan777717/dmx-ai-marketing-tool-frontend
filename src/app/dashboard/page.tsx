@@ -47,7 +47,6 @@ export default function DashboardPage() {
     let isMounted = true;
     if (!currentWorkspace?.id) return;
 
-    setLoading(true);
     AnalyticsService.getDashboard(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {
