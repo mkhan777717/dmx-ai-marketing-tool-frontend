@@ -48,7 +48,9 @@ export default function AIToolsStats() {
     AnalyticsService.getAIUsage(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {
-          setUsage(res.data?.data || []);
+          const raw = res.data as { data?: AIUsageResponse[] } | AIUsageResponse[];
+          const list = Array.isArray(raw) ? raw : (raw as { data?: AIUsageResponse[] })?.data || [];
+          setUsage(list);
         }
       })
       .catch(() => {

@@ -20,7 +20,8 @@ export default function DashboardCampaignTable() {
     CampaignService.getAll(currentWorkspace.id, { limit: 5 })
       .then((res) => {
         if (isMounted) {
-          setCampaigns(res.data?.data || []);
+          const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+          setCampaigns(list);
         }
       })
       .catch(() => {

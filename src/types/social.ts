@@ -17,6 +17,7 @@ export interface SocialAccount {
 
 export interface SocialAccountConnectRequest {
   provider: string;
+  workspace_id?: string;
   code?: string;
   redirect_uri?: string;
   account_id?: string;

@@ -51,7 +51,9 @@ export default function DashboardPage() {
     AnalyticsService.getDashboard(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {
-          setMetrics(res.data?.data || null);
+          const raw = res.data as { data?: DashboardOverviewResponse };
+          const dataObj = raw && "data" in raw && raw.data ? raw.data : (raw as unknown as DashboardOverviewResponse);
+          setMetrics(dataObj || null);
         }
       })
       .catch(() => {

@@ -55,9 +55,14 @@ api.interceptors.response.use(
 
       if (status === 401 && typeof window !== "undefined") {
         const currentPath = window.location.pathname;
-        if (!currentPath.startsWith("/login") && !currentPath.startsWith("/signup")) {
-          await supabase.auth.signOut().catch(() => {});
-          window.location.href = "/login";
+        const isAuthPage = currentPath.startsWith("/login") || currentPath.startsWith("/signup");
+        
+        if (!isAuthPage) {
+          // Check if session is expired/missing before redirecting
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            window.location.href = "/login";
+          }
         }
       }
 

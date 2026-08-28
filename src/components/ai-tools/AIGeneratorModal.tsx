@@ -7,14 +7,17 @@ import { useWorkspace } from "@/context/WorkspaceContext";
 interface AIGeneratorModalProps {
   onClose: () => void;
   defaultTopic?: string;
+  campaignId?: string;
 }
 
 export default function AIGeneratorModal({
   onClose,
   defaultTopic = "",
+  campaignId = "",
 }: AIGeneratorModalProps) {
   const { currentWorkspace } = useWorkspace();
   const [prompt, setPrompt] = useState(defaultTopic);
+  const [selectedCampaignId, setSelectedCampaignId] = useState(campaignId);
   const [platform, setPlatform] = useState("LinkedIn");
   const [tone, setTone] = useState("Professional");
   const [loading, setLoading] = useState(false);
@@ -27,6 +30,11 @@ export default function AIGeneratorModal({
       setError("Please select a valid workspace.");
       return;
     }
+    const activeCampaignId = selectedCampaignId || campaignId;
+    if (!activeCampaignId) {
+      setError("Please specify or select a campaign for content generation.");
+      return;
+    }
     if (!prompt.trim()) return;
 
     try {
@@ -34,11 +42,15 @@ export default function AIGeneratorModal({
       setError(null);
       setGeneratedResult(null);
 
-      const response = await AIContentService.generateContent(currentWorkspace.id, {
-        prompt: prompt.trim(),
-        platform,
-        tone,
-      });
+      const response = await AIContentService.generateContent(
+        currentWorkspace.id,
+        activeCampaignId,
+        {
+          prompt: prompt.trim(),
+          platform,
+          tone,
+        }
+      );
 
       const data = response.data?.data;
       if (data?.body || data?.generated_text) {
@@ -73,6 +85,22 @@ export default function AIGeneratorModal({
         )}
 
         <form onSubmit={handleGenerate} className="space-y-4">
+          {!campaignId && (
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
+                Campaign ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={selectedCampaignId}
+                onChange={(e) => setSelectedCampaignId(e.target.value)}
+                placeholder="Enter campaign ID for content generation"
+                required
+                className="w-full h-9 px-3.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              />
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
               Topic / Prompt <span className="text-red-500">*</span>

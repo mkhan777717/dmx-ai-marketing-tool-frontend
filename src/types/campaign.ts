@@ -2,6 +2,7 @@ export type CampaignStatus =
   | "DRAFT"
   | "ACTIVE"
   | "PAUSED"
+  | "SCHEDULED"
   | "COMPLETED"
   | "ARCHIVED"
   | "draft"

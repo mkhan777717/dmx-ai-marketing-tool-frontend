@@ -14,7 +14,7 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
   const { currentWorkspace } = useWorkspace();
   const [name, setName] = useState("");
   const [budget, setBudget] = useState("");
-  const [status, setStatus] = useState<CampaignStatus>("draft");
+  const [status, setStatus] = useState<CampaignStatus>("DRAFT");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
@@ -33,6 +33,7 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
       setError(null);
 
       await CampaignService.create(currentWorkspace.id, {
+        campaign_name: name,
         name,
         description: description.trim() || undefined,
         status,
@@ -128,11 +129,11 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
                 onChange={(e) => setStatus(e.target.value as CampaignStatus)}
                 className="w-full h-10 pl-3.5 pr-9 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all appearance-none cursor-pointer"
               >
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="paused">Paused</option>
-                <option value="completed">Completed</option>
+                <option value="DRAFT">Draft</option>
+                <option value="ACTIVE">Active</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="PAUSED">Paused</option>
+                <option value="COMPLETED">Completed</option>
               </select>
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                 <svg

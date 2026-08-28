@@ -25,7 +25,8 @@ export default function MembersTable() {
     setError(null);
     MemberService.getMembers(currentWorkspace.id)
       .then((res) => {
-        setMembers(res.data?.data || []);
+        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setMembers(list);
       })
       .catch(() => {
         setError("Failed to fetch workspace members");

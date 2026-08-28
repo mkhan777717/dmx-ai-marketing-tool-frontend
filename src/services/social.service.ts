@@ -9,18 +9,21 @@ import type {
 } from "@/types/social";
 
 export const SocialService = {
-  // Backend returns raw list for social accounts
   getAccounts(workspaceId: string, params?: { skip?: number; limit?: number }) {
-    return api.get<SocialAccount[]>(ENDPOINTS.SOCIAL_ACCOUNTS(workspaceId), {
-      params,
-    });
+    return api.get<ApiResponse<SocialAccount[]> | SocialAccount[]>(
+      ENDPOINTS.SOCIAL_ACCOUNTS(workspaceId),
+      { params }
+    );
   },
 
-  // Backend returns raw object for connect
   connectAccount(workspaceId: string, data: SocialAccountConnectRequest) {
-    return api.post<SocialAccount>(
+    const payload = {
+      ...data,
+      workspace_id: workspaceId,
+    };
+    return api.post<ApiResponse<SocialAccount> | SocialAccount>(
       ENDPOINTS.SOCIAL_CONNECT(workspaceId),
-      data
+      payload
     );
   },
 

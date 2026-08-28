@@ -30,8 +30,6 @@ const WorkspaceContext = createContext<WorkspaceContextType>({
   refetchWorkspaces: async () => {},
 });
 
-const DEFAULT_WORKSPACE_ID = "00000000-0000-0000-0000-000000000000";
-
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
@@ -51,7 +49,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
       const res = await WorkspaceService.getAll();
-      const list = res.data?.data || [];
+      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setWorkspaces(list);
 
       if (list.length > 0) {
@@ -59,30 +57,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
           setCurrentWorkspaceId(list[0].id);
         }
       } else {
-        // Fallback workspace if none returned
-        const dummyWorkspace: Workspace = {
-          id: DEFAULT_WORKSPACE_ID,
-          name: "Default Workspace",
-          slug: "default-workspace",
-          owner_id: user.id,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-        setWorkspaces([dummyWorkspace]);
-        setCurrentWorkspaceId(dummyWorkspace.id);
+        setCurrentWorkspaceId(null);
       }
     } catch {
       setError("Failed to fetch workspaces");
-      const dummyWorkspace: Workspace = {
-        id: DEFAULT_WORKSPACE_ID,
-        name: "Default Workspace",
-        slug: "default-workspace",
-        owner_id: user?.id || "user",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      setWorkspaces([dummyWorkspace]);
-      setCurrentWorkspaceId(dummyWorkspace.id);
+      setWorkspaces([]);
+      setCurrentWorkspaceId(null);
     } finally {
       setLoading(false);
     }

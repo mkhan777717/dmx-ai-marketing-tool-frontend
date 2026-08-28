@@ -33,7 +33,8 @@ export default function CampaignTable({
 
     CampaignService.getAll(currentWorkspace.id, params)
       .then((res) => {
-        setCampaigns(res.data?.data || []);
+        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setCampaigns(list);
       })
       .catch(() => {
         setError("Failed to load campaigns.");

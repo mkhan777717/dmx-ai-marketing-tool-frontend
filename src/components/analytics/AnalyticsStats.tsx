@@ -47,7 +47,9 @@ export default function AnalyticsStats() {
     AnalyticsService.getOverview(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {
-          setSnapshot(res.data?.data || null);
+          const raw = res.data as { data?: AnalyticsSnapshotResponse };
+          const dataObj = raw && "data" in raw && raw.data ? raw.data : (raw as unknown as AnalyticsSnapshotResponse);
+          setSnapshot(dataObj || null);
         }
       })
       .catch(() => {

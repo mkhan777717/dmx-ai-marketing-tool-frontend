@@ -18,7 +18,9 @@ export default function CampaignPerformanceTable() {
     AnalyticsService.getCampaignAnalytics(currentWorkspace.id)
       .then((res) => {
         if (isMounted) {
-          setData(res.data?.data || []);
+          const raw = res.data as { data?: CampaignAnalyticsResponse[] } | CampaignAnalyticsResponse[];
+          const list = Array.isArray(raw) ? raw : (raw as { data?: CampaignAnalyticsResponse[] })?.data || [];
+          setData(list);
         }
       })
       .catch(() => {

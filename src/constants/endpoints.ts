@@ -33,16 +33,20 @@ export const ENDPOINTS = {
     `/workspaces/${workspaceId}/campaigns/${campaignId}/status`,
 
   // Campaign Scheduler
-  CAMPAIGN_SCHEDULE: (campaignId: string) =>
-    `/campaigns/${campaignId}/schedule`,
-  CAMPAIGN_PUBLISH: (campaignId: string) =>
-    `/campaigns/${campaignId}/publish`,
-  CAMPAIGN_PAUSE: (campaignId: string) => `/campaigns/${campaignId}/pause`,
-  CAMPAIGN_RESUME: (campaignId: string) => `/campaigns/${campaignId}/resume`,
-  CAMPAIGN_HISTORY: (campaignId: string) => `/campaigns/${campaignId}/history`,
+  CAMPAIGN_SCHEDULE: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/schedule`,
+  CAMPAIGN_PUBLISH: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/publish`,
+  CAMPAIGN_PAUSE: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/pause`,
+  CAMPAIGN_RESUME: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/resume`,
+  CAMPAIGN_HISTORY: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/history`,
 
   // AI & Campaign Content
-  AI_GENERATE: (workspaceId: string) => `/workspaces/${workspaceId}/ai/generate`,
+  AI_GENERATE: (workspaceId: string, campaignId: string) =>
+    `/workspaces/${workspaceId}/campaigns/${campaignId}/ai/generate`,
   CAMPAIGN_CONTENTS: (workspaceId: string, campaignId: string) =>
     `/workspaces/${workspaceId}/campaigns/${campaignId}/contents`,
   CAMPAIGN_CONTENT_BY_ID: (

@@ -61,47 +61,47 @@ export const CampaignService = {
   },
 
   // Scheduling APIs
-  schedule(campaignId: string, data: CampaignScheduleCreate) {
-    return api.post<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_SCHEDULE(campaignId),
+  schedule(workspaceId: string, campaignId: string, data: CampaignScheduleCreate) {
+    return api.post<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_SCHEDULE(workspaceId, campaignId),
       data
     );
   },
 
-  updateSchedule(campaignId: string, data: CampaignScheduleUpdate) {
-    return api.put<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_SCHEDULE(campaignId),
+  updateSchedule(workspaceId: string, campaignId: string, data: CampaignScheduleUpdate) {
+    return api.put<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_SCHEDULE(workspaceId, campaignId),
       data
     );
   },
 
-  cancelSchedule(campaignId: string) {
-    return api.delete<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_SCHEDULE(campaignId)
+  cancelSchedule(workspaceId: string, campaignId: string) {
+    return api.delete<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_SCHEDULE(workspaceId, campaignId)
     );
   },
 
-  publishImmediately(campaignId: string) {
-    return api.post<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_PUBLISH(campaignId)
+  publishImmediately(workspaceId: string, campaignId: string) {
+    return api.post<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_PUBLISH(workspaceId, campaignId)
     );
   },
 
-  pauseSchedule(campaignId: string) {
-    return api.post<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_PAUSE(campaignId)
+  pauseSchedule(workspaceId: string, campaignId: string) {
+    return api.post<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_PAUSE(workspaceId, campaignId)
     );
   },
 
-  resumeSchedule(campaignId: string) {
-    return api.post<CampaignScheduleResponse>(
-      ENDPOINTS.CAMPAIGN_RESUME(campaignId)
+  resumeSchedule(workspaceId: string, campaignId: string) {
+    return api.post<ApiResponse<CampaignScheduleResponse> | CampaignScheduleResponse>(
+      ENDPOINTS.CAMPAIGN_RESUME(workspaceId, campaignId)
     );
   },
 
-  getHistory(campaignId: string) {
-    return api.get<CampaignPublishHistory[]>(
-      ENDPOINTS.CAMPAIGN_HISTORY(campaignId)
+  getHistory(workspaceId: string, campaignId: string) {
+    return api.get<ApiResponse<CampaignPublishHistory[]> | CampaignPublishHistory[]>(
+      ENDPOINTS.CAMPAIGN_HISTORY(workspaceId, campaignId)
     );
   },
 };
