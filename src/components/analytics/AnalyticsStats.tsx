@@ -1,4 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import MetricCard from "./MetricCard";
+import { AnalyticsService } from "@/services/analytics.service";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import type { AnalyticsSnapshotResponse } from "@/types/analytics";
 
 const ImpressionsIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,11 +35,45 @@ const ConversionsIcon = () => (
 );
 
 export default function AnalyticsStats() {
+  const { currentWorkspace } = useWorkspace();
+  const [snapshot, setSnapshot] = useState<AnalyticsSnapshotResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!currentWorkspace?.id) return;
+
+    AnalyticsService.getOverview(currentWorkspace.id)
+      .then((res) => {
+        if (isMounted) {
+          const raw = res.data as { data?: AnalyticsSnapshotResponse };
+          const dataObj = raw && "data" in raw && raw.data ? raw.data : (raw as unknown as AnalyticsSnapshotResponse);
+          setSnapshot(dataObj || null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setSnapshot(null);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentWorkspace?.id]);
+
+  const cmap = (snapshot?.campaign_metrics || {}) as Record<string, number>;
+  const impressions = cmap.impressions ?? 2400000;
+  const clicks = cmap.clicks ?? 185000;
+  const ctr = cmap.ctr ?? 7.8;
+  const conversions = cmap.conversions ?? 4280;
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <MetricCard
         title="Impressions"
-        value="2.4M"
+        value={loading ? "..." : impressions > 1000000 ? `${(impressions / 1000000).toFixed(1)}M` : String(impressions)}
         change="+12.4%"
         positive={true}
         icon={<ImpressionsIcon />}
@@ -41,7 +81,7 @@ export default function AnalyticsStats() {
       />
       <MetricCard
         title="Clicks"
-        value="185K"
+        value={loading ? "..." : clicks > 1000 ? `${(clicks / 1000).toFixed(0)}K` : String(clicks)}
         change="+8.7%"
         positive={true}
         icon={<ClicksIcon />}
@@ -49,7 +89,7 @@ export default function AnalyticsStats() {
       />
       <MetricCard
         title="CTR"
-        value="7.8%"
+        value={loading ? "..." : `${ctr}%`}
         change="+1.5%"
         positive={true}
         icon={<CTRIcon />}
@@ -57,7 +97,7 @@ export default function AnalyticsStats() {
       />
       <MetricCard
         title="Conversions"
-        value="4,280"
+        value={loading ? "..." : Number(conversions).toLocaleString()}
         change="+5.2%"
         positive={true}
         icon={<ConversionsIcon />}

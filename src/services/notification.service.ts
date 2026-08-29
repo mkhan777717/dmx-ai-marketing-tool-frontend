@@ -2,7 +2,6 @@ import { api } from "@/lib/api";
 import { ENDPOINTS } from "@/constants/endpoints";
 import type {
   NotificationPreferenceResponse,
-  NotificationPreferenceUpdate,
   NotificationResponse,
 } from "@/types/notification";
 
@@ -14,7 +13,9 @@ export const NotificationService = {
   },
 
   markAsRead(notificationId: string) {
-    return api.patch<NotificationResponse>(ENDPOINTS.NOTIFICATION_READ(notificationId));
+    return api.patch<NotificationResponse>(
+      ENDPOINTS.NOTIFICATION_READ(notificationId)
+    );
   },
 
   markAllAsRead() {
@@ -26,10 +27,12 @@ export const NotificationService = {
   },
 
   getPreferences() {
-    return api.get<NotificationPreferenceResponse[]>(ENDPOINTS.NOTIFICATION_PREFERENCES);
+    return api.get<NotificationPreferenceResponse[]>(
+      ENDPOINTS.NOTIFICATION_PREFERENCES
+    );
   },
 
-  updatePreference(preferenceId: string, data: NotificationPreferenceUpdate) {
+  updatePreference(preferenceId: string, data: Record<string, boolean>) {
     void preferenceId;
     void data;
     return Promise.reject(

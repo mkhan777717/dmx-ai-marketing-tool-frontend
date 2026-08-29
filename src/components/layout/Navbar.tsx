@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { NotificationService } from "@/services/notification.service";
 import type { NotificationResponse } from "@/types/notification";
+import { useUser } from "@/context/UserContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 const pageTitles: Record<string, { title: string; description: string }> = {
   "/dashboard":                    { title: "Dashboard",       description: "Welcome back — here's what's happening." },
@@ -32,10 +34,29 @@ function getPageMeta(pathname: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const meta = getPageMeta(pathname);
+  const { user, loading: userLoading } = useUser();
+  const { workspaces, currentWorkspace, setCurrentWorkspaceId } = useWorkspace();
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+
+  const userDisplayName = user?.full_name || user?.name || (user?.email ? user.email.split("@")[0] : "User");
+  const userEmail = user?.email || "";
+  const userInitials = useMemo(() => {
+    if (user?.full_name || user?.name) {
+      const parts = (user.full_name || user.name || "").trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      } else if (parts[0]) {
+        return parts[0].substring(0, 2).toUpperCase();
+      }
+    }
+    if (user?.email) {
+      return user.email.substring(0, 2).toUpperCase();
+    }
+    return "U";
+  }, [user]);
 
   const unreadCount = useMemo(() => notifications.filter((item) => !item.read_at).length, [notifications]);
 
@@ -137,12 +158,31 @@ export default function Navbar() {
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <div>
           <h1 className="text-[0.95rem] font-semibold text-slate-900 leading-tight">{meta.title}</h1>
           <p className="text-[0.72rem] text-slate-400 leading-tight hidden sm:block">{meta.description}</p>
         </div>
+
+        {/* Workspace Switcher Pill */}
+        {workspaces.length > 0 && (
+          <div className="hidden lg:flex items-center gap-1.5 pl-3 border-l border-slate-200">
+            <span className="text-[0.7rem] font-semibold text-slate-400 uppercase">Workspace:</span>
+            <select
+              value={currentWorkspace?.id || ""}
+              onChange={(e) => setCurrentWorkspaceId(e.target.value)}
+              className="h-7 px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {workspaces.map((ws) => (
+                <option key={ws.id} value={ws.id}>
+                  {ws.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
+
       <div className="flex items-center gap-2">
         <div className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm w-52 hover:border-slate-300 transition-colors cursor-text">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -227,10 +267,18 @@ export default function Navbar() {
         </div>
         <div className="w-px h-6 bg-slate-200 mx-1" />
         <button aria-label="User profile" className="flex items-center gap-2.5 h-9 px-2 rounded-lg hover:bg-slate-100 transition-colors group">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[0.7rem] font-bold shrink-0">AD</div>
+          {user?.avatar_url ? (
+            <img src={user.avatar_url} alt={userDisplayName} className="w-7 h-7 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[0.7rem] font-bold shrink-0">
+              {userInitials}
+            </div>
+          )}
           <div className="hidden sm:block text-left">
-            <p className="text-[0.8rem] font-semibold text-slate-800 leading-tight">Admin</p>
-            <p className="text-[0.65rem] text-slate-400 leading-tight">admin@datamindx.io</p>
+            <p className="text-[0.8rem] font-semibold text-slate-800 leading-tight">
+              {userLoading ? "Loading..." : userDisplayName}
+            </p>
+            <p className="text-[0.65rem] text-slate-400 leading-tight">{userEmail}</p>
           </div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 hidden sm:block">
             <polyline points="6 9 12 15 18 9" />

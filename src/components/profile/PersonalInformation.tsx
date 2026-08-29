@@ -1,6 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useUser } from "@/context/UserContext";
+
 export default function PersonalInformation() {
+  const { user } = useUser();
+  const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [department, setDepartment] = useState(user?.department || "");
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.full_name || user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setDepartment(user.department || "");
+    }
+  }, [user]);
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Card header */}
@@ -18,7 +36,8 @@ export default function PersonalInformation() {
             </label>
             <input
               type="text"
-              defaultValue="Vaishnavi"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
             />
           </div>
@@ -30,7 +49,8 @@ export default function PersonalInformation() {
             </label>
             <input
               type="email"
-              defaultValue="vaishnavi@datamindx.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
             />
           </div>
@@ -42,7 +62,8 @@ export default function PersonalInformation() {
             </label>
             <input
               type="text"
-              defaultValue="+91 9876543210"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
             />
           </div>
@@ -54,7 +75,8 @@ export default function PersonalInformation() {
             </label>
             <input
               type="text"
-              defaultValue="Marketing"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
               className="w-full h-10 px-3.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
             />
           </div>
