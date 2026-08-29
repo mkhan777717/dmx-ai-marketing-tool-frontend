@@ -45,8 +45,8 @@ export const ENDPOINTS = {
     `/workspaces/${workspaceId}/campaigns/${campaignId}/history`,
 
   // AI & Campaign Content
-  AI_GENERATE: (workspaceId: string, campaignId: string) =>
-    `/workspaces/${workspaceId}/campaigns/${campaignId}/ai/generate`,
+  AI_GENERATE: (workspaceId: string) =>
+    `/workspaces/${workspaceId}/ai/generate`,
   CAMPAIGN_CONTENTS: (workspaceId: string, campaignId: string) =>
     `/workspaces/${workspaceId}/campaigns/${campaignId}/contents`,
   CAMPAIGN_CONTENT_BY_ID: (

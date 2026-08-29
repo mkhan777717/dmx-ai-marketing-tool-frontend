@@ -1,24 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 
 export default function PersonalInformation() {
   const { user } = useUser();
-
-  const [prevUser, setPrevUser] = useState(user);
   const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [department, setDepartment] = useState(user?.department || "");
 
-  if (user !== prevUser) {
-    setPrevUser(user);
-    setFullName(user?.full_name || user?.name || "");
-    setEmail(user?.email || "");
-    setPhone(user?.phone || "");
-    setDepartment(user?.department || "");
-  }
+  useEffect(() => {
+    if (user) {
+      setFullName(user.full_name || user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setDepartment(user.department || "");
+    }
+  }, [user]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

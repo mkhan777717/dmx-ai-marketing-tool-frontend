@@ -11,6 +11,7 @@ export type ContentType =
 export interface AIContentGenerateRequest {
   prompt: string;
   content_type?: ContentType;
+  campaign_id?: string | null;
   platform?: string | null;
   tone?: string | null;
   tone_of_voice?: string | null;

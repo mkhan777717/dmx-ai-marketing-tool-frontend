@@ -178,16 +178,16 @@ export default function CampaignTable({
                       <CampaignStatusBadge status={campaign.status} />
                       <select
                         className="text-xs border border-slate-200 rounded px-1.5 py-0.5 bg-white text-slate-600 focus:outline-none cursor-pointer"
-                        value={String(campaign.status).toLowerCase()}
+                        value={campaign.status}
                         onChange={(e) =>
-                          handleStatusChange(campaign.id, e.target.value.toUpperCase() as CampaignStatus)
+                          handleStatusChange(campaign.id, e.target.value as CampaignStatus)
                         }
                       >
-                        <option value="draft">Draft</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="active">Active</option>
-                        <option value="paused">Paused</option>
-                        <option value="completed">Completed</option>
+                        <option value="DRAFT">Draft</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="PAUSED">Paused</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="ARCHIVED">Archived</option>
                       </select>
                     </div>
                   </td>

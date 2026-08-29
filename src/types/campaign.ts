@@ -2,23 +2,16 @@ export type CampaignStatus =
   | "DRAFT"
   | "ACTIVE"
   | "PAUSED"
-  | "SCHEDULED"
   | "COMPLETED"
-  | "ARCHIVED"
-  | "draft"
-  | "scheduled"
-  | "active"
-  | "paused"
-  | "completed"
-  | "archived";
+  | "ARCHIVED";
 
 export interface Campaign {
   id: string;
   workspace_id: string;
   owner_id?: string;
   creator_id?: string | null;
+  campaign_name: string;
   name?: string;
-  campaign_name?: string;
   description?: string | null;
   objective?: string | null;
   campaign_type?: string | null;
@@ -34,7 +27,7 @@ export interface Campaign {
 }
 
 export interface CampaignCreate {
-  campaign_name?: string;
+  campaign_name: string;
   name?: string;
   description?: string | null;
   objective?: string | null;

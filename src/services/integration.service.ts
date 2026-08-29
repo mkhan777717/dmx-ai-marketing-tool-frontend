@@ -8,10 +8,10 @@ export const IntegrationService = {
     return api.get<ApiResponse<IntegrationConnection[]>>(ENDPOINTS.INTEGRATIONS);
   },
 
-  getOAuthUrl(provider: string, redirectUri: string, workspaceId?: string) {
+  getOAuthUrl(provider: string, redirectUri: string, workspaceId: string) {
     return api.get<ApiResponse<OAuthUrlResponse>>(
       ENDPOINTS.INTEGRATION_OAUTH_URL(provider),
-      { params: { redirect_uri: redirectUri, workspace_id: workspaceId || undefined } }
+      { params: { redirect_uri: redirectUri, workspace_id: workspaceId } }
     );
   },
 

@@ -12,12 +12,12 @@ import type {
 export const AIContentService = {
   generateContent(
     workspaceId: string,
-    campaignId: string,
     data: AIContentGenerateRequest
   ) {
     const payload = {
       prompt: data.prompt,
       content_type: data.content_type || "SOCIAL_POST",
+      campaign_id: data.campaign_id || undefined,
       language: data.language || "en",
       tone_of_voice: data.tone_of_voice || data.tone || undefined,
       target_audience: data.target_audience || undefined,
@@ -26,7 +26,7 @@ export const AIContentService = {
     };
 
     return api.post<ApiResponse<AIContentGenerateResponse>>(
-      ENDPOINTS.AI_GENERATE(workspaceId, campaignId),
+      ENDPOINTS.AI_GENERATE(workspaceId),
       payload
     );
   },

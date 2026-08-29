@@ -4,6 +4,7 @@ import NotificationSettings from "@/components/settings/NotificationSettings";
 import PreferencesCard from "@/components/settings/PreferencesCard";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 import SettingsHeader from "@/components/settings/SettingsHeader";
+import SocialIntegrationsCard from "@/components/settings/SocialIntegrationsCard";
 
 export default function SettingsPage() {
   return (
@@ -13,6 +14,7 @@ export default function SettingsPage() {
         <AccountSettings />
         <PreferencesCard />
       </div>
+      <SocialIntegrationsCard />
       <NotificationSettings />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <AppearanceSettings />

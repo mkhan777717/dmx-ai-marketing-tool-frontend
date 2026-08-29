@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 
 export default function AccountSettings() {
   const { user } = useUser();
 
-  const [prevUser, setPrevUser] = useState(user);
   const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
 
-  if (user !== prevUser) {
-    setPrevUser(user);
-    setFullName(user?.full_name || user?.name || "");
-    setEmail(user?.email || "");
-  }
+  useEffect(() => {
+    if (user) {
+      setFullName(user.full_name || user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

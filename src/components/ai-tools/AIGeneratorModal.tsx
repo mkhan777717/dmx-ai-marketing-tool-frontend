@@ -3,25 +3,30 @@
 import { useState } from "react";
 import { AIContentService } from "@/services/ai-content.service";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import type { ContentType } from "@/types/ai-content";
 
 interface AIGeneratorModalProps {
   onClose: () => void;
   defaultTopic?: string;
   campaignId?: string;
+  onSaveSuccess?: () => void;
 }
 
 export default function AIGeneratorModal({
   onClose,
   defaultTopic = "",
   campaignId = "",
+  onSaveSuccess,
 }: AIGeneratorModalProps) {
   const { currentWorkspace } = useWorkspace();
   const [prompt, setPrompt] = useState(defaultTopic);
   const [selectedCampaignId, setSelectedCampaignId] = useState(campaignId);
-  const [platform, setPlatform] = useState("LinkedIn");
+  const [contentType, setContentType] = useState<ContentType>("SOCIAL_POST");
   const [tone, setTone] = useState("Professional");
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [generatedResult, setGeneratedResult] = useState<string | null>(null);
+  const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -30,25 +35,23 @@ export default function AIGeneratorModal({
       setError("Please select a valid workspace.");
       return;
     }
-    const activeCampaignId = selectedCampaignId || campaignId;
-    if (!activeCampaignId) {
-      setError("Please specify or select a campaign for content generation.");
-      return;
-    }
     if (!prompt.trim()) return;
 
     try {
       setLoading(true);
       setError(null);
       setGeneratedResult(null);
+      setSavedMsg(null);
+
+      const activeCampaignId = selectedCampaignId || campaignId;
 
       const response = await AIContentService.generateContent(
         currentWorkspace.id,
-        activeCampaignId,
         {
           prompt: prompt.trim(),
-          platform,
-          tone,
+          content_type: contentType,
+          campaign_id: activeCampaignId || undefined,
+          tone_of_voice: tone,
         }
       );
 
@@ -65,9 +68,42 @@ export default function AIGeneratorModal({
     }
   };
 
+  const handleSaveToCampaign = async () => {
+    if (!currentWorkspace?.id) return;
+    const targetCampaignId = selectedCampaignId || campaignId;
+    if (!targetCampaignId) {
+      setError("Please select a target campaign ID to save this content.");
+      return;
+    }
+    if (!generatedResult) return;
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      await AIContentService.createContent(
+        currentWorkspace.id,
+        targetCampaignId,
+        {
+          campaign_id: targetCampaignId,
+          title: prompt.slice(0, 50) || "AI Generated Content",
+          content_type: contentType,
+          body: generatedResult,
+        }
+      );
+
+      setSavedMsg("Content saved to campaign successfully!");
+      if (onSaveSuccess) onSaveSuccess();
+    } catch {
+      setError("Failed to save content to campaign. Please verify target campaign ID.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-xl w-full p-6 space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-base font-bold text-slate-800">Generate Content with AI</h3>
           <button
@@ -84,18 +120,23 @@ export default function AIGeneratorModal({
           </div>
         )}
 
+        {savedMsg && (
+          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-lg">
+            {savedMsg}
+          </div>
+        )}
+
         <form onSubmit={handleGenerate} className="space-y-4">
           {!campaignId && (
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
-                Campaign ID <span className="text-red-500">*</span>
+                Target Campaign ID (Optional)
               </label>
               <input
                 type="text"
                 value={selectedCampaignId}
                 onChange={(e) => setSelectedCampaignId(e.target.value)}
-                placeholder="Enter campaign ID for content generation"
-                required
+                placeholder="Enter campaign ID if saving to a specific campaign"
                 className="w-full h-9 px-3.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               />
             </div>
@@ -118,18 +159,20 @@ export default function AIGeneratorModal({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
-                Platform
+                Content Type
               </label>
               <select
-                value={platform}
-                onChange={(e) => setPlatform(e.target.value)}
+                value={contentType}
+                onChange={(e) => setContentType(e.target.value as ContentType)}
                 className="w-full h-9 px-3 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none"
               >
-                <option value="LinkedIn">LinkedIn</option>
-                <option value="Twitter">Twitter / X</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Instagram">Instagram</option>
-                <option value="Blog">Blog Article</option>
+                <option value="SOCIAL_POST">Social Post</option>
+                <option value="EMAIL">Email</option>
+                <option value="BLOG">Blog Article</option>
+                <option value="ADVERTISEMENT">Advertisement</option>
+                <option value="LANDING_PAGE">Landing Page</option>
+                <option value="SMS">SMS</option>
+                <option value="OTHER">Other</option>
               </select>
             </div>
             <div>
@@ -168,17 +211,30 @@ export default function AIGeneratorModal({
         </form>
 
         {generatedResult && (
-          <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+          <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-              <span>Generated Content:</span>
-              <button
-                onClick={() => navigator.clipboard.writeText(generatedResult)}
-                className="text-blue-600 hover:underline"
-              >
-                Copy
-              </button>
+              <span>Generated Content Preview (Not saved yet):</span>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText(generatedResult)}
+                  className="text-blue-600 hover:underline"
+                >
+                  Copy
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveToCampaign}
+                  disabled={saving}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save to Campaign"}
+                </button>
+              </div>
             </div>
-            <p className="text-sm text-slate-800 whitespace-pre-wrap">{generatedResult}</p>
+            <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+              {generatedResult}
+            </p>
           </div>
         )}
       </div>
