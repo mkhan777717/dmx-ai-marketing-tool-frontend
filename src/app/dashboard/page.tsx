@@ -45,7 +45,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let isMounted = true;
-    if (!currentWorkspace?.id) return;
+    if (!currentWorkspace?.id) {
+      Promise.resolve().then(() => {
+        if (isMounted) setLoading(false);
+      });
+      return () => {
+        isMounted = false;
+      };
+    }
 
     AnalyticsService.getDashboard(currentWorkspace.id)
       .then((res) => {

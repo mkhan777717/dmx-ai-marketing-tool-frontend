@@ -139,6 +139,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
     loadedTokenRef.current = currentToken;
 
+    const authUser = session.user;
+    const fallbackUser: UserProfile = {
+      id: authUser.id,
+      email: authUser.email || "",
+      full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || "",
+      name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || "",
+      avatar_url: authUser.user_metadata?.avatar_url || "",
+      created_at: authUser.created_at,
+    };
+
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        setUser((curr) => curr || fallbackUser);
+        setLoading(false);
+      }
+    });
+
     void fetchBackendProfile(session);
 
     return () => {
