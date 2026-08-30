@@ -44,7 +44,7 @@ export default function CampaignPerformanceTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[650px]">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
               <th className="px-6 py-3.5 text-left text-[0.7rem] font-semibold text-slate-500 uppercase tracking-wider">Campaign ID</th>

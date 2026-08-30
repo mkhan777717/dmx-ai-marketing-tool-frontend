@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { IntegrationService } from "@/services/integration.service";
 import { SocialService } from "@/services/social.service";
@@ -24,34 +24,38 @@ export default function SocialIntegrationsCard() {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const loadData = useCallback(async (workspaceId: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [accRes, intRes] = await Promise.allSettled([
-        SocialService.getAccounts(workspaceId),
-        IntegrationService.getIntegrations(),
-      ]);
-
-      if (accRes.status === "fulfilled") {
-        const accs = Array.isArray(accRes.value.data) ? accRes.value.data : (accRes.value.data as unknown as { data: SocialAccount[] })?.data || [];
-        setSocialAccounts(accs);
-      }
-      if (intRes.status === "fulfilled") {
-        const ints = Array.isArray(intRes.value.data) ? intRes.value.data : intRes.value.data?.data || [];
-        setIntegrations(ints);
-      }
-    } catch {
-      setError("Unable to load connected accounts.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    let isMounted = true;
     if (!currentWorkspace?.id) return;
-    void loadData(currentWorkspace.id);
-  }, [currentWorkspace?.id, loadData]);
+
+    const workspaceId = currentWorkspace.id;
+
+    Promise.allSettled([
+      SocialService.getAccounts(workspaceId),
+      IntegrationService.getIntegrations(),
+    ])
+      .then(([accRes, intRes]) => {
+        if (!isMounted) return;
+        if (accRes.status === "fulfilled") {
+          const accs = Array.isArray(accRes.value.data) ? accRes.value.data : (accRes.value.data as unknown as { data: SocialAccount[] })?.data || [];
+          setSocialAccounts(accs);
+        }
+        if (intRes.status === "fulfilled") {
+          const ints = Array.isArray(intRes.value.data) ? intRes.value.data : intRes.value.data?.data || [];
+          setIntegrations(ints);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setError("Unable to load connected accounts.");
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentWorkspace?.id]);
 
   const handleConnect = async (providerId: string) => {
     if (!currentWorkspace?.id) {
@@ -70,7 +74,7 @@ export default function SocialIntegrationsCard() {
       const targetUrl = typeof urlData === "string" ? urlData : urlData?.url;
 
       if (targetUrl) {
-        window.location.href = targetUrl;
+        window.location.assign(targetUrl);
       } else {
         setError(`Failed to retrieve OAuth URL for ${providerId}.`);
       }
@@ -89,29 +93,29 @@ export default function SocialIntegrationsCard() {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-slate-800">Connected Accounts & Integrations</h3>
           <p className="text-xs text-slate-400 mt-0.5">Workspace-scoped OAuth integrations and social channels</p>
         </div>
         {currentWorkspace && (
-          <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full self-start sm:self-auto">
             Workspace: {currentWorkspace.name}
           </span>
         )}
       </div>
 
       {error && (
-        <div className="mx-6 mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
+        <div className="mx-4 sm:mx-6 mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
           {error}
         </div>
       )}
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {loading ? (
           <div className="text-xs text-slate-400 py-4">Loading integrations…</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PROVIDERS.map((prov) => {
               const connected = isConnected(prov.id);
               const isConnectingThis = connecting === prov.id;

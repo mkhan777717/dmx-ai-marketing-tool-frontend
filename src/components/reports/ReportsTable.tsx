@@ -145,7 +145,7 @@ export default function ReportsTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[750px]">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
               <th className="px-6 py-3.5 text-left text-[0.7rem] font-semibold text-slate-500 uppercase tracking-wider">
@@ -233,7 +233,7 @@ export default function ReportsTable() {
       </div>
 
       {hasReports && (
-        <div className="px-6 py-3.5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-400 whitespace-nowrap">
             Showing <span className="font-semibold text-slate-600">{from}–{to}</span> of{" "}
             <span className="font-semibold text-slate-600">{totalItems}</span> reports

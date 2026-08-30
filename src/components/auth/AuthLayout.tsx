@@ -48,10 +48,10 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
       </div>
 
       {/* Right panel */}
-      <div className="flex flex-1 items-center justify-center p-8">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="flex items-center gap-2.5 mb-8 lg:hidden">
+          <div className="flex items-center gap-2.5 mb-6 sm:mb-8 lg:hidden">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
@@ -61,7 +61,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-8">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-slate-900">{title}</h2>
               <p className="text-sm text-slate-500 mt-1">{subtitle}</p>

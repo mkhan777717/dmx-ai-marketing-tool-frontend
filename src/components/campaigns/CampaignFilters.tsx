@@ -18,9 +18,9 @@ export default function CampaignFilters({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       {/* Left: Search + Filter */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center w-full sm:w-auto">
         {/* Search */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
             <svg
               width="15"
@@ -41,16 +41,16 @@ export default function CampaignFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search campaigns…"
-            className="h-10 pl-9 pr-4 w-64 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
+            className="h-10 pl-9 pr-4 w-full sm:w-64 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all"
           />
         </div>
 
         {/* Status filter */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="h-10 pl-3 pr-8 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all appearance-none cursor-pointer"
+            className="h-10 pl-3 pr-8 w-full sm:w-auto rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all appearance-none cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="ACTIVE">Active</option>
@@ -80,7 +80,7 @@ export default function CampaignFilters({
       <button
         onClick={onCreateClick}
         type="button"
-        className="inline-flex items-center justify-center gap-2 h-10 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150 whitespace-nowrap"
+        className="inline-flex items-center justify-center gap-2 h-10 px-5 w-full sm:w-auto rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150 whitespace-nowrap"
       >
         <svg
           width="15"

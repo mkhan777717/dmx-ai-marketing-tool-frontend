@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceService } from "@/services/workspace.service";
 
 export default function WorkspaceCard() {
   const { currentWorkspace, refetchWorkspaces } = useWorkspace();
+  const [prevWsId, setPrevWsId] = useState(currentWorkspace?.id);
   const [name, setName] = useState(currentWorkspace?.name || "");
   const [slug, setSlug] = useState(currentWorkspace?.slug || "");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  useEffect(() => {
-    if (currentWorkspace) {
-      setName(currentWorkspace.name || "");
-      setSlug(currentWorkspace.slug || "");
-    }
-  }, [currentWorkspace]);
+  if (currentWorkspace?.id !== prevWsId) {
+    setPrevWsId(currentWorkspace?.id);
+    setName(currentWorkspace?.name || "");
+    setSlug(currentWorkspace?.slug || "");
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,14 +41,14 @@ export default function WorkspaceCard() {
   return (
     <form onSubmit={handleSave} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Card header */}
-      <div className="px-6 py-4 border-b border-slate-100">
+      <div className="px-4 sm:px-6 py-4 border-b border-slate-100">
         <h3 className="text-sm font-semibold text-slate-800">Workspace Details</h3>
         <p className="text-xs text-slate-400 mt-0.5">Update your active workspace name and slug</p>
       </div>
 
       {msg && (
         <div
-          className={`mx-6 mt-4 p-3 text-xs rounded-lg ${
+          className={`mx-4 sm:mx-6 mt-4 p-3 text-xs rounded-lg ${
             msg.type === "success"
               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
               : "bg-rose-50 text-rose-700 border border-rose-200"
@@ -58,7 +58,7 @@ export default function WorkspaceCard() {
         </div>
       )}
 
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         {/* Workspace Name */}
         <div className="space-y-1.5">
           <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
@@ -88,11 +88,11 @@ export default function WorkspaceCard() {
       </div>
 
       {/* Card footer */}
-      <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+      <div className="px-4 sm:px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center gap-2 h-9 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150 disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 h-9 px-5 w-full sm:w-auto rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150 disabled:opacity-50"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />

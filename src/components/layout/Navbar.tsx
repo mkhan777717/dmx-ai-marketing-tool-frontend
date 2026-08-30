@@ -31,7 +31,12 @@ function getPageMeta(pathname: string) {
   return { title: "DatamindX", description: "AI Marketing Platform" };
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  mobileOpen?: boolean;
+  setMobileOpen?: (open: boolean | ((prev: boolean) => boolean)) => void;
+}
+
+export default function Navbar({ setMobileOpen }: NavbarProps) {
   const pathname = usePathname();
   const meta = getPageMeta(pathname);
   const { user, loading: userLoading } = useUser();
@@ -157,11 +162,25 @@ export default function Navbar() {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="text-[0.95rem] font-semibold text-slate-900 leading-tight">{meta.title}</h1>
-          <p className="text-[0.72rem] text-slate-400 leading-tight hidden sm:block">{meta.description}</p>
+    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 sticky top-0 z-30">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        {/* Hamburger menu button for mobile/tablet */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen?.((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+          className="lg:hidden p-2 -ml-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
+        <div className="min-w-0">
+          <h1 className="text-[0.95rem] font-semibold text-slate-900 leading-tight truncate">{meta.title}</h1>
+          <p className="text-[0.72rem] text-slate-400 leading-tight hidden sm:block truncate">{meta.description}</p>
         </div>
 
         {/* Workspace Switcher Pill */}
@@ -183,12 +202,12 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <div className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-400 text-sm w-52 hover:border-slate-300 transition-colors cursor-text">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <span className="text-[0.8rem] select-none">Search anything…</span>
+          <span className="text-[0.8rem] select-none truncate">Search anything…</span>
           <span className="ml-auto text-[0.65rem] px-1.5 py-0.5 rounded border border-slate-300 text-slate-400 font-mono">⌘K</span>
         </div>
         <div className="relative">
@@ -209,7 +228,7 @@ export default function Navbar() {
             )}
           </button>
           {open ? (
-            <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white shadow-xl z-40 overflow-hidden">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-xs sm:w-80 rounded-xl border border-slate-200 bg-white shadow-xl z-40 overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-slate-800">Notifications</p>

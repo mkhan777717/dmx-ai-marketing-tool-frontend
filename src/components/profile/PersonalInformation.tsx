@@ -1,34 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 
 export default function PersonalInformation() {
   const { user } = useUser();
+  const [prevUserId, setPrevUserId] = useState(user?.id);
   const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [department, setDepartment] = useState(user?.department || "");
 
-  useEffect(() => {
-    if (user) {
-      setFullName(user.full_name || user.name || "");
-      setEmail(user.email || "");
-      setPhone(user.phone || "");
-      setDepartment(user.department || "");
-    }
-  }, [user]);
+  if (user?.id !== prevUserId) {
+    setPrevUserId(user?.id);
+    setFullName(user?.full_name || user?.name || "");
+    setEmail(user?.email || "");
+    setPhone(user?.phone || "");
+    setDepartment(user?.department || "");
+  }
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Card header */}
-      <div className="px-6 py-4 border-b border-slate-100">
+      <div className="px-4 sm:px-6 py-4 border-b border-slate-100">
         <h3 className="text-sm font-semibold text-slate-800">Personal Information</h3>
         <p className="text-xs text-slate-400 mt-0.5">Update your name, email and contact details</p>
       </div>
 
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Full Name */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
@@ -84,16 +84,16 @@ export default function PersonalInformation() {
       </div>
 
       {/* Card footer with save action */}
-      <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+      <div className="px-4 sm:px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
         <button
           type="button"
-          className="inline-flex items-center h-9 px-4 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
+          className="inline-flex items-center justify-center h-9 px-4 w-full sm:w-auto rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
         >
           Cancel
         </button>
         <button
           type="button"
-          className="inline-flex items-center gap-2 h-9 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150"
+          className="inline-flex items-center justify-center gap-2 h-9 px-5 w-full sm:w-auto rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold shadow-sm shadow-blue-200 transition-all duration-150"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />

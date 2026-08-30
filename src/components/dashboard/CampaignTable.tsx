@@ -42,14 +42,14 @@ export default function DashboardCampaignTable() {
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
       {/* Card header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-100">
         <div>
           <h2 className="text-sm font-semibold text-slate-800">Recent Campaigns</h2>
           <p className="text-xs text-slate-400 mt-0.5">Latest campaigns in active workspace</p>
         </div>
         <Link
           href="/dashboard/campaigns"
-          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
+          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1 shrink-0"
         >
           View all
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -59,7 +59,7 @@ export default function DashboardCampaignTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-100">
               <th className="px-6 py-3 text-left text-[0.7rem] font-semibold text-slate-500 uppercase tracking-wider">Campaign</th>
