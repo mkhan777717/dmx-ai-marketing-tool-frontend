@@ -1,22 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceService } from "@/services/workspace.service";
 
 export default function WorkspaceCard() {
   const { currentWorkspace, refetchWorkspaces } = useWorkspace();
-  const [prevWsId, setPrevWsId] = useState(currentWorkspace?.id);
   const [name, setName] = useState(currentWorkspace?.name || "");
   const [slug, setSlug] = useState(currentWorkspace?.slug || "");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  if (currentWorkspace?.id !== prevWsId) {
-    setPrevWsId(currentWorkspace?.id);
-    setName(currentWorkspace?.name || "");
-    setSlug(currentWorkspace?.slug || "");
-  }
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted && currentWorkspace) {
+        setName(currentWorkspace.name || "");
+        setSlug(currentWorkspace.slug || "");
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [currentWorkspace]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

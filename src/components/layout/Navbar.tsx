@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import axios from "axios";
 import { supabase } from "@/lib/supabase";
@@ -32,7 +33,6 @@ function getPageMeta(pathname: string) {
 }
 
 interface NavbarProps {
-  mobileOpen?: boolean;
   setMobileOpen?: (open: boolean | ((prev: boolean) => boolean)) => void;
 }
 
@@ -95,6 +95,26 @@ export default function Navbar({ setMobileOpen }: NavbarProps) {
       ? notifications.filter((item) => !item.read_at).length
       : 0;
   }, [notifications]);
+
+  const filteredSearchItems = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const items = [
+      { name: "Dashboard Overview", href: "/dashboard", cat: "Navigation" },
+      { name: "Campaigns", href: "/dashboard/campaigns", cat: "Navigation" },
+      { name: "Create New Campaign", href: "/dashboard/campaigns/create", cat: "Actions" },
+      { name: "Analytics & Performance", href: "/dashboard/analytics", cat: "Navigation" },
+      { name: "Reports & Exports", href: "/dashboard/reports", cat: "Navigation" },
+      { name: "AI Content Generator", href: "/dashboard/ai-tools", cat: "AI Tools" },
+      { name: "Workspace Settings", href: "/dashboard/workspace", cat: "Settings" },
+      { name: "Billing & Subscriptions", href: "/dashboard/billing", cat: "Settings" },
+      { name: "Account Profile", href: "/dashboard/profile", cat: "User" },
+      { name: "App Preferences", href: "/dashboard/settings", cat: "User" },
+    ];
+    if (!query) return items;
+    return items.filter(
+      (item) => item.name.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
 
   const loadedTokenRef = useRef<string | null>(null);
 
@@ -260,7 +280,7 @@ export default function Navbar({ setMobileOpen }: NavbarProps) {
                   autoFocus
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search pages, tools, campaigns..."
+                  placeholder="Search pages and actions..."
                   className="w-full text-sm focus:outline-none text-slate-800 placeholder-slate-400 bg-transparent"
                 />
                 <button
@@ -272,21 +292,13 @@ export default function Navbar({ setMobileOpen }: NavbarProps) {
                 </button>
               </div>
               <div className="max-h-80 overflow-y-auto p-2 space-y-1">
-                {[
-                  { name: "Dashboard Overview", href: "/dashboard", cat: "Navigation" },
-                  { name: "Campaigns", href: "/dashboard/campaigns", cat: "Navigation" },
-                  { name: "Create New Campaign", href: "/dashboard/campaigns/create", cat: "Actions" },
-                  { name: "Analytics & Performance", href: "/dashboard/analytics", cat: "Navigation" },
-                  { name: "Reports & Exports", href: "/dashboard/reports", cat: "Navigation" },
-                  { name: "AI Content Generator", href: "/dashboard/ai-tools", cat: "AI Tools" },
-                  { name: "Workspace Settings", href: "/dashboard/workspace", cat: "Settings" },
-                  { name: "Billing & Subscriptions", href: "/dashboard/billing", cat: "Settings" },
-                  { name: "Account Profile", href: "/dashboard/profile", cat: "User" },
-                  { name: "App Preferences", href: "/dashboard/settings", cat: "User" },
-                ]
-                  .filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.cat.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((item) => (
-                    <a
+                {filteredSearchItems.length === 0 ? (
+                  <div className="px-4 py-8 text-center text-xs text-slate-400">
+                    No results found for &quot;{searchQuery}&quot;
+                  </div>
+                ) : (
+                  filteredSearchItems.map((item) => (
+                    <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setSearchOpen(false)}
@@ -294,8 +306,9 @@ export default function Navbar({ setMobileOpen }: NavbarProps) {
                     >
                       <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600">{item.name}</span>
                       <span className="text-[0.65rem] font-semibold text-slate-400 uppercase bg-slate-100 group-hover:bg-blue-100 group-hover:text-blue-700 px-2 py-0.5 rounded">{item.cat}</span>
-                    </a>
-                  ))}
+                    </Link>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -404,20 +417,20 @@ export default function Navbar({ setMobileOpen }: NavbarProps) {
                 <p className="text-xs font-semibold text-slate-800 truncate">{userDisplayName}</p>
                 <p className="text-[0.65rem] text-slate-400 truncate">{userEmail}</p>
               </div>
-              <a
+              <Link
                 href="/dashboard/profile"
                 onClick={() => setProfileMenuOpen(false)}
                 className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 My Profile
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/dashboard/settings"
                 onClick={() => setProfileMenuOpen(false)}
                 className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 Settings
-              </a>
+              </Link>
               <div className="my-1 border-t border-slate-100" />
               <button
                 type="button"

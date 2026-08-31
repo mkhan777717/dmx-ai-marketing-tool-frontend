@@ -36,17 +36,28 @@ export default function SocialIntegrationsCard() {
     ])
       .then(([accRes, intRes]) => {
         if (!isMounted) return;
+
+        let hasError = false;
+
         if (accRes.status === "fulfilled") {
           const accs = Array.isArray(accRes.value.data) ? accRes.value.data : (accRes.value.data as unknown as { data: SocialAccount[] })?.data || [];
           setSocialAccounts(accs);
+        } else {
+          hasError = true;
         }
+
         if (intRes.status === "fulfilled") {
           const ints = Array.isArray(intRes.value.data) ? intRes.value.data : intRes.value.data?.data || [];
           setIntegrations(ints);
+        } else {
+          hasError = true;
         }
-      })
-      .catch(() => {
-        if (isMounted) setError("Unable to load connected accounts.");
+
+        if (accRes.status === "rejected" && intRes.status === "rejected") {
+          setError("Unable to load connected accounts and integrations.");
+        } else if (hasError) {
+          setError("Some integration details could not be loaded.");
+        }
       })
       .finally(() => {
         if (isMounted) setLoading(false);

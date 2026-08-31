@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 
 export default function AccountSettings() {
   const { user } = useUser();
-  const [prevUserId, setPrevUserId] = useState(user?.id);
   const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
 
-  if (user?.id !== prevUserId) {
-    setPrevUserId(user?.id);
-    setFullName(user?.full_name || user?.name || "");
-    setEmail(user?.email || "");
-  }
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted && user) {
+        setFullName(user.full_name || user.name || "");
+        setEmail(user.email || "");
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

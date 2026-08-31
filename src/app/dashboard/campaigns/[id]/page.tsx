@@ -63,36 +63,17 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
     let isMounted = true;
     if (!currentWorkspace?.id || !campaignId) return;
 
-    CampaignService.getById(currentWorkspace.id, campaignId)
-      .then((res) => {
-        if (!isMounted) return;
-        const data = res.data?.data || (res.data as unknown as Campaign);
-        setCampaign(data);
-      })
-      .catch(() => {
-        if (isMounted) setError("Failed to load campaign details.");
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
-
-    AIContentService.listContents(currentWorkspace.id, campaignId)
-      .then((res) => {
-        if (!isMounted) return;
-        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
-        setContents(list);
-      })
-      .catch(() => {
-        if (isMounted) setContents([]);
-      })
-      .finally(() => {
-        if (isMounted) setContentsLoading(false);
-      });
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        void fetchCampaignDetails(currentWorkspace.id);
+        void fetchContents(currentWorkspace.id);
+      }
+    });
 
     return () => {
       isMounted = false;
     };
-  }, [currentWorkspace?.id, campaignId]);
+  }, [currentWorkspace?.id, campaignId, fetchCampaignDetails, fetchContents]);
 
   const handleCreateContent = async (e: React.FormEvent) => {
     e.preventDefault();
