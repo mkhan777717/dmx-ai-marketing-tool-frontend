@@ -1,31 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isDashboardRoute = pathname.startsWith("/dashboard");
   const isAuthRoute = pathname === "/login" || pathname === "/signup";
   const isRootRoute = pathname === "/";
 
-  const authCookie =
-    request.cookies.get("sb-access-token")?.value ||
-    request.cookies.get("sb-auth-token")?.value ||
-    Array.from(request.cookies.getAll()).find((c) => c.name.includes("auth-token"))?.value;
+  // Check for Supabase session cookies (supports @supabase/ssr and client auth cookies)
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some((cookie) => {
+    const name = cookie.name.toLowerCase();
+    return (
+      name.startsWith("sb-") ||
+      name.includes("auth-token") ||
+      name.includes("access-token") ||
+      name.includes("supabase")
+    );
+  });
 
   if (isRootRoute) {
-    if (authCookie) {
+    if (hasAuthCookie) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isAuthRoute && authCookie) {
+  if (isAuthRoute && hasAuthCookie) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (isDashboardRoute && !authCookie) {
-    return NextResponse.next();
+  if (isDashboardRoute && !hasAuthCookie) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();

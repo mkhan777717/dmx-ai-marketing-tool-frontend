@@ -7,7 +7,6 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { UserProvider } from "@/context/UserContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
-import { applyThemeToDOM } from "@/components/settings/AppearanceSettings";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,13 +16,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authState, setAuthState] = useState<"checking" | "authenticated" | "unauthenticated">("checking");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("dmx_theme") || "system";
-      applyThemeToDOM(savedTheme);
-    }
-  }, []);
 
   useEffect(() => {
     let isMounted = true;

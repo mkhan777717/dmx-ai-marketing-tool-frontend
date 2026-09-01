@@ -69,6 +69,17 @@ export default function AppearanceSettings() {
 
   useEffect(() => {
     applyThemeToDOM(selectedTheme);
+
+    if (selectedTheme === "system" && typeof window !== "undefined") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => {
+        applyThemeToDOM("system");
+      };
+      mediaQuery.addEventListener("change", handleChange);
+      return () => {
+        mediaQuery.removeEventListener("change", handleChange);
+      };
+    }
   }, [selectedTheme]);
 
   const handleSelectTheme = (val: string) => {

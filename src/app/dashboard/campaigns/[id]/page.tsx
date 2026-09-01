@@ -37,6 +37,8 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
 
   const fetchCampaignDetails = useCallback(async (workspaceId: string) => {
     try {
+      setLoading(true);
+      setError(null);
       const res = await CampaignService.getById(workspaceId, campaignId);
       const data = res.data?.data || (res.data as unknown as Campaign);
       setCampaign(data);
@@ -49,6 +51,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
 
   const fetchContents = useCallback(async (workspaceId: string) => {
     try {
+      setContentsLoading(true);
       const res = await AIContentService.listContents(workspaceId, campaignId);
       const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setContents(list);
