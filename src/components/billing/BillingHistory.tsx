@@ -24,7 +24,7 @@ export default function BillingHistory() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[600px]">
           {/* Table header — matches CampaignTable th exactly */}
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">

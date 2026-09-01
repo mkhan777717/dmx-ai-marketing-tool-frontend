@@ -56,7 +56,7 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
       className="bg-white rounded-xl border border-slate-200 shadow-sm max-w-3xl overflow-hidden"
     >
       {/* Form header */}
-      <div className="px-7 py-5 border-b border-slate-100">
+      <div className="px-4 sm:px-7 py-5 border-b border-slate-100">
         <h2 className="text-sm font-semibold text-slate-800">Campaign Details</h2>
         <p className="text-xs text-slate-400 mt-0.5">
           Fill in the information below to set up your campaign.
@@ -64,13 +64,13 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
       </div>
 
       {error && (
-        <div className="mx-7 mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
+        <div className="mx-4 sm:mx-7 mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
           {error}
         </div>
       )}
 
       {/* Form body */}
-      <div className="px-7 py-6 space-y-5">
+      <div className="px-4 sm:px-7 py-6 space-y-5">
         {/* Campaign Name */}
         <div className="space-y-1.5">
           <label
@@ -208,7 +208,7 @@ export default function CampaignForm({ onSuccess, onCancel }: CampaignFormProps)
       </div>
 
       {/* Form footer */}
-      <div className="px-7 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+      <div className="px-4 sm:px-7 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
         <p className="text-xs text-slate-400">
           <span className="text-red-500">*</span> Required fields
         </p>

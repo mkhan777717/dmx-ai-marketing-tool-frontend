@@ -1,5 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+export const applyThemeToDOM = (theme: string) => {
+  if (typeof window === "undefined") return;
+  const root = document.documentElement;
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  if (isDark) {
+    root.classList.add("dark");
+    root.setAttribute("data-theme", "dark");
+  } else {
+    root.classList.remove("dark");
+    root.setAttribute("data-theme", "light");
+  }
+};
+
 const themes = [
   {
     value: "system",
@@ -42,6 +60,36 @@ const themes = [
 ];
 
 export default function AppearanceSettings() {
+  const [selectedTheme, setSelectedTheme] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dmx_theme") || "system";
+    }
+    return "system";
+  });
+
+  useEffect(() => {
+    applyThemeToDOM(selectedTheme);
+
+    if (selectedTheme === "system" && typeof window !== "undefined") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => {
+        applyThemeToDOM("system");
+      };
+      mediaQuery.addEventListener("change", handleChange);
+      return () => {
+        mediaQuery.removeEventListener("change", handleChange);
+      };
+    }
+  }, [selectedTheme]);
+
+  const handleSelectTheme = (val: string) => {
+    setSelectedTheme(val);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("dmx_theme", val);
+    }
+    applyThemeToDOM(val);
+  };
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Card header */}
@@ -51,33 +99,37 @@ export default function AppearanceSettings() {
       </div>
 
       <div className="p-6 space-y-3">
-        {/* Theme picker — styled rows matching QuickActions item pattern */}
-        {themes.map((theme, i) => (
-          <label
-            key={theme.value}
-            className={`flex items-center gap-3 p-3.5 rounded-lg border cursor-pointer transition-all ${
-              i === 0
-                ? "border-blue-200 bg-blue-50/60"
-                : "border-slate-200 bg-slate-50/40 hover:bg-slate-50 hover:border-slate-300"
-            }`}
-          >
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-              i === 0 ? "bg-blue-100 text-blue-600" : "bg-slate-100 text-slate-500"
-            }`}>
-              {theme.icon}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-800">{theme.label}</p>
-              <p className="text-xs text-slate-400">{theme.description}</p>
-            </div>
-            <input
-              type="radio"
-              name="theme"
-              defaultChecked={i === 0}
-              className="accent-blue-600"
-            />
-          </label>
-        ))}
+        {themes.map((theme) => {
+          const isSelected = selectedTheme === theme.value;
+          return (
+            <label
+              key={theme.value}
+              onClick={() => handleSelectTheme(theme.value)}
+              className={`flex items-center gap-3 p-3.5 rounded-lg border cursor-pointer transition-all ${
+                isSelected
+                  ? "border-blue-200 bg-blue-50/60"
+                  : "border-slate-200 bg-slate-50/40 hover:bg-slate-50 hover:border-slate-300"
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                isSelected ? "bg-blue-100 text-blue-600" : "bg-slate-100 text-slate-500"
+              }`}>
+                {theme.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-slate-800">{theme.label}</p>
+                <p className="text-xs text-slate-400">{theme.description}</p>
+              </div>
+              <input
+                type="radio"
+                name="theme"
+                checked={isSelected}
+                onChange={() => handleSelectTheme(theme.value)}
+                className="accent-blue-600"
+              />
+            </label>
+          );
+        })}
       </div>
     </div>
   );

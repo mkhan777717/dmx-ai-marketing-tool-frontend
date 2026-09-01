@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import RootThemeInitializer from "@/components/theme/RootThemeInitializer";
 
 export const metadata: Metadata = {
   title: "DMX AI Marketing Tool",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        <RootThemeInitializer />
+        {children}
+      </body>
     </html>
   );
 }

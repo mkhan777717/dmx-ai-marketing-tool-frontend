@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useCallback } from "react";
 import Link from "next/link";
 import CampaignStatusBadge from "@/components/campaigns/CampaignStatusBadge";
 import AIGeneratorModal from "@/components/ai-tools/AIGeneratorModal";
@@ -35,7 +35,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
   const [newBody, setNewBody] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
-  const fetchCampaignDetails = async (workspaceId: string) => {
+  const fetchCampaignDetails = useCallback(async (workspaceId: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -47,9 +47,9 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
     } finally {
       setLoading(false);
     }
-  };
+  }, [campaignId]);
 
-  const fetchContents = async (workspaceId: string) => {
+  const fetchContents = useCallback(async (workspaceId: string) => {
     try {
       setContentsLoading(true);
       const res = await AIContentService.listContents(workspaceId, campaignId);
@@ -60,13 +60,23 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
     } finally {
       setContentsLoading(false);
     }
-  };
+  }, [campaignId]);
 
   useEffect(() => {
+    let isMounted = true;
     if (!currentWorkspace?.id || !campaignId) return;
-    void fetchCampaignDetails(currentWorkspace.id);
-    void fetchContents(currentWorkspace.id);
-  }, [currentWorkspace?.id, campaignId]);
+
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        void fetchCampaignDetails(currentWorkspace.id);
+        void fetchContents(currentWorkspace.id);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentWorkspace?.id, campaignId, fetchCampaignDetails, fetchContents]);
 
   const handleCreateContent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,7 +169,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       </div>
 
       {/* Page Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900">
             {campaign?.campaign_name || campaign?.name || "Campaign Details"}
@@ -168,7 +178,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
             Manage campaign details and generated marketing assets
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={() => setShowAIModal(true)}
             className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all"
@@ -315,7 +325,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       {/* Create Content Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-slate-800">Add New Content Asset</h3>
             <form onSubmit={handleCreateContent} className="space-y-4">
               <div>
@@ -379,7 +389,7 @@ export default function CampaignDetailsPage({ params }: CampaignDetailsPageProps
       {/* Edit Content Modal */}
       {editingContent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-slate-800">Edit Content Asset</h3>
             <form onSubmit={handleUpdateContent} className="space-y-4">
               <div>

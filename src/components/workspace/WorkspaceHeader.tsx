@@ -8,14 +8,14 @@ export default function WorkspaceHeader() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h2 className="text-xl font-bold text-slate-900">Workspace</h2>
         <p className="text-sm text-slate-500 mt-0.5">
           Manage your workspace, members and permissions.
         </p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 self-start sm:self-auto">
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}

@@ -5,27 +5,32 @@ import { useUser } from "@/context/UserContext";
 
 export default function AccountSettings() {
   const { user } = useUser();
-
   const [fullName, setFullName] = useState(user?.full_name || user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
 
   useEffect(() => {
-    if (user) {
-      setFullName(user.full_name || user.name || "");
-      setEmail(user.email || "");
-    }
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted && user) {
+        setFullName(user.full_name || user.name || "");
+        setEmail(user.email || "");
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Card header */}
-      <div className="px-6 py-4 border-b border-slate-100">
+      <div className="px-4 sm:px-6 py-4 border-b border-slate-100">
         <h3 className="text-sm font-semibold text-slate-800">Account Settings</h3>
         <p className="text-xs text-slate-400 mt-0.5">Update your name and email address</p>
       </div>
 
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">
               Full Name
